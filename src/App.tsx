@@ -1,15 +1,19 @@
-import styled from 'styled-components'
+import { Suspense, lazy } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
-const StyledP = styled.p`
-  color: purple;
-`
+const Home = lazy(() => import('./pages/Home'))
+const NotFound = lazy(() => import('./pages/NotFound'))
 
 function App() {
   return (
-    <>
-      <h1 className="text-3xl">Hello World!</h1>
-      <StyledP>This is a paragraph</StyledP>
-    </>
+    <BrowserRouter>
+      <Suspense fallback={<>Loading...</>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
   )
 }
 

@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 
-import App from '../App'
+import Home from '../pages/Home'
 
-describe('App', () => {
+describe('Home', () => {
   it('Should greet with "Hello World!"', () => {
-    render(<App />)
+    render(<Home />)
     expect(
       screen.getByRole('heading', {
         level: 1,
