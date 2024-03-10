@@ -1,22 +1,31 @@
-import { Suspense, lazy } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { Layout } from './components'
+import { BlogPage, BlogPost, Home, NotFound } from './pages'
 
-const Home = lazy(() => import('./pages/Home'))
-const NotFound = lazy(() => import('./pages/NotFound'))
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    errorElement: <NotFound />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: 'page/:slug',
+        element: <BlogPage />,
+      },
+      {
+        path: 'post/:slug',
+        element: <BlogPost />,
+      },
+    ],
+  },
+])
 
 function App() {
-  return (
-    <div className="prose">
-      <BrowserRouter>
-        <Suspense fallback={<>Loading...</>}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </div>
-  )
+  return <RouterProvider router={router} fallbackElement={<>Loading...</>} />
 }
 
 export default App
