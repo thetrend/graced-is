@@ -14,6 +14,11 @@
   },
   "dependencies": {
     "@apollo/client": "^3.9.6",
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-brands-svg-icons": "^6.5.1",
+    "@fortawesome/free-regular-svg-icons": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@graphcms/rich-text-react-renderer": "^0.6.1",
     "@types/luxon": "^3.4.2",
     "dotenv": "^16.4.5",
