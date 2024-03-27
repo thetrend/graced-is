@@ -3,8 +3,7 @@
 @tailwind utilities;
 
 body {
-  /* background-color: #f7f2f7; */
-  background-image: url('../assets//background.png');
+  background-color: #e8e8e8;
 }
 
 .side-nav {

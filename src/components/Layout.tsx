@@ -42,9 +42,7 @@ function Layout() {
             <img
               src={siteBanner}
               alt="grace d. is"
-              style={{ height: '10vh' }}
-              width="100%"
-              height="100%"
+              style={{ height: '10vh', width: 'auto' }}
             />
           </div>
           <div className="mx-auto md:w-5/6 mt-4 md:mt-20 min-h-screen md:min-h-auto">
