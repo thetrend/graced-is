@@ -8,10 +8,11 @@ body {
 }
 
 .side-nav {
-  li {
+  a {
     @apply
       px-6
       py-2
+      block
     ;
     &:hover {
       @apply
