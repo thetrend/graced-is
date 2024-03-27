@@ -5939,6 +5939,29 @@ export type CategoryFieldsFragment = {
   slug: string
 } & { ' $fragmentName'?: 'CategoryFieldsFragment' }
 
+export type GetCategoriesQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetCategoriesQuery = {
+  __typename?: 'Query'
+  categories: Array<
+    { __typename?: 'Category' } & {
+      ' $fragmentRefs'?: { CategoryFieldsFragment: CategoryFieldsFragment }
+    }
+  >
+}
+
+export type GetCategoryPostCountQueryVariables = Exact<{
+  slug: Scalars['String']['input']
+}>
+
+export type GetCategoryPostCountQuery = {
+  __typename?: 'Query'
+  categoriesConnection: {
+    __typename?: 'CategoryConnection'
+    aggregate: { __typename?: 'Aggregate'; count: number }
+  }
+}
+
 export type PageFieldsFragment = {
   __typename?: 'Page'
   id: string
@@ -6044,6 +6067,17 @@ export type TagFieldsFragment = {
   title: string
   slug: string
 } & { ' $fragmentName'?: 'TagFieldsFragment' }
+
+export type GetTagsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetTagsQuery = {
+  __typename?: 'Query'
+  tags: Array<
+    { __typename?: 'Tag' } & {
+      ' $fragmentRefs'?: { TagFieldsFragment: TagFieldsFragment }
+    }
+  >
+}
 
 export const PageFieldsFragmentDoc = {
   kind: 'Document',
@@ -6294,6 +6328,149 @@ export const PostFieldsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<PostFieldsFragment, unknown>
+export const GetCategoriesDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetCategories' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'categories' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'stage' },
+                value: { kind: 'EnumValue', value: 'PUBLISHED' },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'CategoryFields' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'CategoryFields' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Category' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'title' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'slug' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetCategoriesQuery, GetCategoriesQueryVariables>
+export const GetCategoryPostCountDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetCategoryPostCount' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'slug' } },
+          type: {
+            kind: 'NonNullType',
+            type: {
+              kind: 'NamedType',
+              name: { kind: 'Name', value: 'String' },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'categoriesConnection' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'where' },
+                value: {
+                  kind: 'ObjectValue',
+                  fields: [
+                    {
+                      kind: 'ObjectField',
+                      name: { kind: 'Name', value: 'posts_every' },
+                      value: {
+                        kind: 'ObjectValue',
+                        fields: [
+                          {
+                            kind: 'ObjectField',
+                            name: { kind: 'Name', value: 'categories_every' },
+                            value: {
+                              kind: 'ObjectValue',
+                              fields: [
+                                {
+                                  kind: 'ObjectField',
+                                  name: { kind: 'Name', value: 'slug' },
+                                  value: {
+                                    kind: 'Variable',
+                                    name: { kind: 'Name', value: 'slug' },
+                                  },
+                                },
+                              ],
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'stage' },
+                value: { kind: 'EnumValue', value: 'PUBLISHED' },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'aggregate' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      { kind: 'Field', name: { kind: 'Name', value: 'count' } },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetCategoryPostCountQuery,
+  GetCategoryPostCountQueryVariables
+>
 export const GetPagesDocument = {
   kind: 'Document',
   definitions: [
@@ -6888,3 +7065,54 @@ export const GetPostDocument = {
     },
   ],
 } as unknown as DocumentNode<GetPostQuery, GetPostQueryVariables>
+export const GetTagsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'GetTags' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'tags' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'stage' },
+                value: { kind: 'EnumValue', value: 'PUBLISHED' },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'TagFields' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'TagFields' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Tag' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'title' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'slug' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetTagsQuery, GetTagsQueryVariables>

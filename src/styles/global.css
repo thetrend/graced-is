@@ -6,3 +6,20 @@ body {
   /* background-color: #f7f2f7; */
   background-image: url('../assets//background.png');
 }
+
+.side-nav {
+  li {
+    @apply
+      px-6
+      py-2
+    ;
+    &:hover {
+      @apply
+        bg-pink-200
+      ;
+    }
+    @media (max-width: 767px) {
+      font-size: xx-large;
+    }
+  }
+}

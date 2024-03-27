@@ -21,7 +21,7 @@ function BlogPage() {
 
     return (
       page && (
-        <>
+        <div className="prose">
           <h1>{page.title}</h1>
           {page.subtitle && <h2>{page.subtitle}</h2>}
           <RichText
@@ -32,7 +32,7 @@ function BlogPage() {
             Last Updated:{' '}
             {DateTime.fromISO(page.updatedAt).toRelativeCalendar()}
           </em>
-        </>
+        </div>
       )
     )
   }

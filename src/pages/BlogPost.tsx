@@ -16,12 +16,16 @@ function BlogPost() {
     const { post }: { post: Post } = data
 
     if (!post) {
-      return <NotFound />
+      return (
+        <div className="prose">
+          <NotFound />
+        </div>
+      )
     }
 
     return (
       post && (
-        <>
+        <div className="prose">
           <h1>{post.title}</h1>
           {post.subtitle && <h2>{post.subtitle}</h2>}
           <RichText
@@ -32,7 +36,7 @@ function BlogPost() {
             Last Updated:{' '}
             {DateTime.fromISO(post.updatedAt).toRelativeCalendar()}
           </em>
-        </>
+        </div>
       )
     )
   }

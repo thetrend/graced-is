@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { DateTime } from 'luxon'
 import { RichText } from '@graphcms/rich-text-react-renderer'
-import { Fragment } from 'react'
 import { Link } from 'react-router-dom'
 import { GetPostsQuery } from '../gql'
 import { Category, Post, Tag } from '../gql/generated/graphql'
@@ -12,7 +11,7 @@ function Home() {
   return (
     !loading &&
     data.posts.map((post: Post) => (
-      <Fragment key={post.id}>
+      <div className="prose" key={post.id}>
         <h3>
           <Link to={`/post/${post.slug}`}>{post.title}</Link>
         </h3>
@@ -36,7 +35,7 @@ function Home() {
           content={post.content.json}
           references={post.content.references}
         />
-      </Fragment>
+      </div>
     ))
   )
 }

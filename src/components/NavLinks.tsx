@@ -8,15 +8,18 @@ function NavLinks() {
 
   return (
     !loading && (
-      <ul>
-        <li className="inline-block">
-          <Link to="/">Home</Link>
-        </li>
+      <ul className="side-nav md:mt-0 mt-20">
+        <Link to="/">
+          <li>Home</li>
+        </Link>
         {data.pages.map((page: Page) => (
-          <li className="inline-block ml-4" key={page.id}>
-            <Link to={`/page/${page.slug}`}>{page.title}</Link>
-          </li>
+          <Link to={`/page/${page.slug}`} key={page.id}>
+            <li>{page.title}</li>
+          </Link>
         ))}
+        <Link to="/contact">
+          <li>Contact</li>
+        </Link>
       </ul>
     )
   )
