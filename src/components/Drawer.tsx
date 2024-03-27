@@ -23,7 +23,11 @@ function Drawer() {
       >
         <NavLinks />
         <div className="p-6 pb-0 text-center">
-          <img src={siteLogo} alt="graced.is logo" className="w-full" />
+          <img
+            src={siteLogo}
+            alt="graced.is logo"
+            className="md:w-full w-2/3"
+          />
         </div>
       </aside>
     </div>
