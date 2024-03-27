@@ -10,11 +10,11 @@ function Drawer() {
     setToggleMenu(!toggleMenu)
   }
   return (
-    <div className="flex flex-row w-5/6 md:w-1/5">
+    <div className="flex flex-row w-3/4 md:w-1/5">
       <FontAwesomeIcon
         icon={!toggleMenu ? faBars : faX}
         size="2x"
-        className="md:hidden p-8 md:w-0 ease-in-out transition-all duration-300 fixed top-0 right-0"
+        className="md:hidden p-8 md:w-0 ease-in-out transition-all duration-300 fixed top-0 right-0 z-10"
         onClick={handleToggleMenu}
       />
       <aside
