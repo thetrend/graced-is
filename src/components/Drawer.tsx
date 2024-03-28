@@ -10,23 +10,24 @@ function Drawer() {
     setToggleMenu(!toggleMenu)
   }
   return (
-    <div className="flex flex-row w-3/4 md:w-1/5">
+    <div className="flex flex-row w-full md:w-2/5">
       <FontAwesomeIcon
         icon={!toggleMenu ? faBars : faX}
         size="2x"
-        className="md:hidden p-8 md:w-0 ease-in-out transition-all duration-300 fixed top-0 right-0 z-10"
+        className="md:hidden p-8 fixed top-0 right-0 z-10"
         onClick={handleToggleMenu}
       />
       <aside
-        className={`fixed md:relative md:sticky top-0 h-screen bg-[#f7f2f7] border-r shadow-md md:py-6 pt-2 pb-6 flex flex-col justify-between md:transform-none ease-in-out transition-all duration-300
+        className={`
+        drawer
         ${toggleMenu ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <NavLinks />
-        <div className="p-6 pb-0 text-center">
+        <div className="p-6 pb-12 md:pb-0 text-center">
           <img
             src={siteLogo}
             alt="graced.is logo"
-            className="md:w-full w-2/3"
+            className="md:w-full w-2/3 mx-auto"
           />
         </div>
       </aside>

@@ -19,6 +19,14 @@ const documents = {
     types.GetCategoriesDocument,
   '\n  query GetCategoryPostCount($slug: String!) {\n    categoriesConnection(\n      where: { posts_every: { categories_every: { slug: $slug } } }\n      stage: PUBLISHED\n    ) {\n      aggregate {\n        count\n      }\n    }\n  }\n':
     types.GetCategoryPostCountDocument,
+  '\n  fragment CommentFields on Comment {\n    id\n    name\n    email\n    comment\n    private\n    updatedAt\n    createdAt\n  }\n':
+    types.CommentFieldsFragmentDoc,
+  '\n  query PostCommentsQuery($slug: String!) {\n    comments(where: { post: { slug: $slug } }, stage: PUBLISHED) {\n      ...CommentFields\n    }\n  }\n\n  \n':
+    types.PostCommentsQueryDocument,
+  '\n  fragment CurrentlyFields on CurrentlyPost {\n    doing\n    drinking\n    eating\n    feeling\n    gaming\n    listening\n    location\n    reading\n    watching\n    weather\n    updatedAt\n  }\n':
+    types.CurrentlyFieldsFragmentDoc,
+  '\n  query GetCurrentlyPosts {\n    currentlyPosts(last: 1) {\n      ...CurrentlyFields\n    }\n  }\n  \n':
+    types.GetCurrentlyPostsDocument,
   '\n  fragment PageFields on Page {\n    id\n    publishedAt\n    updatedAt\n    title\n    subtitle\n    content {\n      references {\n        ... on Asset {\n          id\n          url\n        }\n      }\n      json\n    }\n    publishedBy {\n      name\n      picture\n    }\n    slug\n    navLink\n  }\n':
     types.PageFieldsFragmentDoc,
   '\n  query GetPages {\n    pages(stage: PUBLISHED) {\n      ...PageFields\n    }\n  }\n  \n':
@@ -69,6 +77,30 @@ export function gql(
 export function gql(
   source: '\n  query GetCategoryPostCount($slug: String!) {\n    categoriesConnection(\n      where: { posts_every: { categories_every: { slug: $slug } } }\n      stage: PUBLISHED\n    ) {\n      aggregate {\n        count\n      }\n    }\n  }\n'
 ): (typeof documents)['\n  query GetCategoryPostCount($slug: String!) {\n    categoriesConnection(\n      where: { posts_every: { categories_every: { slug: $slug } } }\n      stage: PUBLISHED\n    ) {\n      aggregate {\n        count\n      }\n    }\n  }\n']
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: '\n  fragment CommentFields on Comment {\n    id\n    name\n    email\n    comment\n    private\n    updatedAt\n    createdAt\n  }\n'
+): (typeof documents)['\n  fragment CommentFields on Comment {\n    id\n    name\n    email\n    comment\n    private\n    updatedAt\n    createdAt\n  }\n']
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: '\n  query PostCommentsQuery($slug: String!) {\n    comments(where: { post: { slug: $slug } }, stage: PUBLISHED) {\n      ...CommentFields\n    }\n  }\n\n  \n'
+): (typeof documents)['\n  query PostCommentsQuery($slug: String!) {\n    comments(where: { post: { slug: $slug } }, stage: PUBLISHED) {\n      ...CommentFields\n    }\n  }\n\n  \n']
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: '\n  fragment CurrentlyFields on CurrentlyPost {\n    doing\n    drinking\n    eating\n    feeling\n    gaming\n    listening\n    location\n    reading\n    watching\n    weather\n    updatedAt\n  }\n'
+): (typeof documents)['\n  fragment CurrentlyFields on CurrentlyPost {\n    doing\n    drinking\n    eating\n    feeling\n    gaming\n    listening\n    location\n    reading\n    watching\n    weather\n    updatedAt\n  }\n']
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: '\n  query GetCurrentlyPosts {\n    currentlyPosts(last: 1) {\n      ...CurrentlyFields\n    }\n  }\n  \n'
+): (typeof documents)['\n  query GetCurrentlyPosts {\n    currentlyPosts(last: 1) {\n      ...CurrentlyFields\n    }\n  }\n  \n']
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

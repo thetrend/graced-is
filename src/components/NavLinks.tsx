@@ -15,7 +15,7 @@ function NavLinks() {
             {page.title}
           </Link>
         ))}
-        <Link to="/contact">Contact</Link>
+        <Link to="/page/contact">Contact</Link>
       </menu>
     )
   )

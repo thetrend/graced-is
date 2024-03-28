@@ -6,6 +6,28 @@ body {
   background-color: #e8e8e8;
 }
 
+.drawer {
+  @apply
+    fixed 
+    md:relative 
+    md:sticky 
+    md:transform-none 
+    top-0 
+    h-screen 
+    bg-[#f7f2f7] 
+    border-r 
+    shadow-md 
+    md:py-6 
+    pt-2 
+    pb-6 
+    flex 
+    flex-col 
+    justify-between 
+    ease-in-out 
+    transition-all 
+    duration-300
+}
+
 .side-nav {
   a {
     @apply

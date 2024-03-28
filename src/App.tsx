@@ -1,6 +1,6 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { Layout } from './components'
-import { BlogPage, BlogPost, Home, NotFound } from './pages'
+import { BlogPage, BlogPost, Contact, Home, NotFound } from './pages'
 
 const router = createBrowserRouter([
   {
@@ -15,6 +15,10 @@ const router = createBrowserRouter([
       {
         path: 'page/:slug',
         element: <BlogPage />,
+      },
+      {
+        path: 'page/contact',
+        element: <Contact />,
       },
       {
         path: 'post/:slug',

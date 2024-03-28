@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client'
 import { useParams } from 'react-router-dom'
 import { RichText } from '@graphcms/rich-text-react-renderer'
-import { DateTime } from 'luxon'
 import { GetPageQuery } from '../gql'
 import { Page } from '../gql/generated/graphql'
 import NotFound from './NotFound'
+import { RelativeDate } from '../components/Helpers'
 
 function BlogPage() {
   const { slug } = useParams()
@@ -29,8 +29,7 @@ function BlogPage() {
             references={page.content.references}
           />
           <em>
-            Last Updated:{' '}
-            {DateTime.fromISO(page.updatedAt).toRelativeCalendar()}
+            Last Updated: <RelativeDate date={page.updatedAt} />
           </em>
         </div>
       )
