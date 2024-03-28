@@ -1,44 +1,11 @@
 import { useQuery } from '@apollo/client'
-import { DateTime } from 'luxon'
-import { RichText } from '@graphcms/rich-text-react-renderer'
-import { Fragment } from 'react'
-import { Link } from 'react-router-dom'
 import { GetPostsQuery } from '../gql'
-import { Category, Post, Tag } from '../gql/generated/graphql'
+import { Post } from '../gql/generated/graphql'
+import { PostSnippet } from '../components/Helpers'
 
 function Home() {
   const { data, loading } = useQuery(GetPostsQuery)
-
-  return (
-    !loading &&
-    data.posts.map((post: Post) => (
-      <Fragment key={post.id}>
-        <h3>
-          <Link to={`/post/${post.slug}`}>{post.title}</Link>
-        </h3>
-        <h4>
-          {post.subtitle} Published:{' '}
-          {DateTime.fromISO(post.publishedAt).toRelativeCalendar()}
-        </h4>
-        <h5>
-          Filed under:{' '}
-          {post.categories.map((category: Category) => (
-            <span key={category.id}>{category.title}</span>
-          ))}
-        </h5>
-        <h6>
-          Tags:{' '}
-          {post.tags.map((tag: Tag) => (
-            <span key={tag.id}>{tag.title}</span>
-          ))}
-        </h6>
-        <RichText
-          content={post.content.json}
-          references={post.content.references}
-        />
-      </Fragment>
-    ))
-  )
+  return !loading && data.posts.map((post: Post) => <PostSnippet post={post} />)
 }
 
 export default Home
