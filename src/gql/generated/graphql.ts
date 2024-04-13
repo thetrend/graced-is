@@ -9432,6 +9432,11 @@ export const GetPostsDocument = {
                 name: { kind: 'Name', value: 'stage' },
                 value: { kind: 'EnumValue', value: 'PUBLISHED' },
               },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'orderBy' },
+                value: { kind: 'EnumValue', value: 'id_DESC' },
+              },
             ],
             selectionSet: {
               kind: 'SelectionSet',

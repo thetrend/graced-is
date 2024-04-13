@@ -36,7 +36,7 @@ const PostFields = gql`
 
 const GetPostsQuery = gql`
   query GetPosts {
-    posts(stage: PUBLISHED) {
+    posts(stage: PUBLISHED, orderBy: id_DESC) {
       ...PostFields
     }
   }

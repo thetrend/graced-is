@@ -35,7 +35,7 @@ const documents = {
     types.GetPageDocument,
   '\n  fragment PostFields on Post {\n    id\n    publishedAt\n    updatedAt\n    title\n    subtitle\n    content {\n      references {\n        ... on Asset {\n          id\n          url\n        }\n      }\n      json\n    }\n    publishedBy {\n      name\n      picture\n    }\n    slug\n    categories {\n      ...CategoryFields\n    }\n    tags {\n      ...TagFields\n    }\n  }\n  \n  \n':
     types.PostFieldsFragmentDoc,
-  '\n  query GetPosts {\n    posts(stage: PUBLISHED) {\n      ...PostFields\n    }\n  }\n  \n':
+  '\n  query GetPosts {\n    posts(stage: PUBLISHED, orderBy: id_DESC) {\n      ...PostFields\n    }\n  }\n  \n':
     types.GetPostsDocument,
   '\n  query GetPost($slug: String!) {\n    post(where: { slug: $slug }, stage: PUBLISHED) {\n      ...PostFields\n    }\n  }\n  \n':
     types.GetPostDocument,
@@ -129,8 +129,8 @@ export function gql(
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: '\n  query GetPosts {\n    posts(stage: PUBLISHED) {\n      ...PostFields\n    }\n  }\n  \n'
-): (typeof documents)['\n  query GetPosts {\n    posts(stage: PUBLISHED) {\n      ...PostFields\n    }\n  }\n  \n']
+  source: '\n  query GetPosts {\n    posts(stage: PUBLISHED, orderBy: id_DESC) {\n      ...PostFields\n    }\n  }\n  \n'
+): (typeof documents)['\n  query GetPosts {\n    posts(stage: PUBLISHED, orderBy: id_DESC) {\n      ...PostFields\n    }\n  }\n  \n']
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
