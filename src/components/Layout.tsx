@@ -2,54 +2,48 @@ import { Outlet } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
 import Drawer from './Drawer'
 import Sidebar from './Sidebar'
-import siteBanner from '../assets/site.svg'
-import siteHeader from '../assets/siteheader.webp'
+import logo from '../assets/icon.svg'
 
 function Layout() {
   return (
     <>
       <Helmet>
         <title>grace d. is</title>
-        <meta name="description" content="This is a description of my page" />
-        <meta name="keywords" content="react, meta tags, seo" />
+        <meta
+          name="description"
+          content="The personal blog of Grace de la Mora"
+        />
+        <meta
+          name="keywords"
+          content="programming, blogging, lifestyle, writing"
+        />
         <meta name="author" content="Grace de la Mora" />
-        <meta property="og:title" content="My Page Title" />
-        <meta
-          property="og:description"
-          content="This is a description of my page"
-        />
-        <meta property="og:image" content="https://example.com/image.jpg" />
-        <meta property="og:url" content="https://example.com/my-page" />
-        <meta name="twitter:title" content="My Page Title" />
-        <meta
-          name="twitter:description"
-          content="This is a description of my page"
-        />
-        <meta name="twitter:image" content="https://example.com/image.jpg" />
-        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
 
-      <div className="flex flex-col w-screen md:flex-row justify-between justify-items-stretch">
+      <div className="flex flex-col w-screen lg:flex-row lg:justify-between lg:justify-items-stretch">
         <Drawer />
-        <div className="p-6 w-full flex-grow">
-          <div className="w-full flex flex-row">
+        <div className="p-6 w-full flex flex-col justify-evenly">
+          <header className="px-6 text-5xl font-bold self-start">
             <img
-              src={siteHeader}
-              alt="laptop with makeup brush, stylus"
-              className="hidden md:inline md:mr-10"
-              style={{ height: '10vh' }}
+              src={logo}
+              alt="graced.is logo"
+              style={{ height: '6vh', display: 'inline' }}
+              className="pr-6"
             />
-            <img
-              src={siteBanner}
-              alt="grace d. is"
-              style={{ height: '10vh', width: 'auto' }}
-            />
-          </div>
-          <div className="mx-auto md:w-5/6 mt-4 md:mt-20 min-h-screen md:min-h-auto">
+            grace <span className="text-[#d81159]">d.</span> is
+            <small className="font-normal text-2xl pl-10">
+              a personal blog
+            </small>
+          </header>
+          <div className="mx-auto md:w-5/6 flex-grow mt-4 md:mt-12 md:min-h-auto">
             <Outlet />
           </div>
+          <Sidebar />
+          <section className="text-center pt-20">
+            &copy; 2022-2024, Grace de la Mora. Opinions expressed are my own,
+            unless explicitly stated.
+          </section>
         </div>
-        <Sidebar />
       </div>
     </>
   )

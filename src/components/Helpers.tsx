@@ -1,6 +1,12 @@
 import { DateTime } from 'luxon'
-import { RichText } from '@graphcms/rich-text-react-renderer'
 import { Link } from 'react-router-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+  faCalendarDay,
+  faComment,
+  faFolderOpen,
+  faTags,
+} from '@fortawesome/free-solid-svg-icons'
 import { Category, Post, Scalars, Tag } from '../gql/generated/graphql'
 
 function RelativeDate({ date }: { date: Scalars['DateTime']['output'] }) {
@@ -9,7 +15,9 @@ function RelativeDate({ date }: { date: Scalars['DateTime']['output'] }) {
 
 function PostCategoriesMap({ categories }: { categories: Category[] }) {
   return categories.map((category: Category) => (
-    <span key={category.id}>{category.title}</span>
+    <Link to={`/categories/${category.slug}`} key={category.id}>
+      {category.title}
+    </Link>
   ))
 }
 
@@ -23,23 +31,23 @@ function PostTagsMap({ tags }: { tags: Tag[] }) {
 
 function PostSnippet({ post }: { post: Post }) {
   return (
-    <div className="prose" key={post.id}>
-      <h3>
+    <div className="prose pb-10" key={post.id}>
+      <h2>
         <Link to={`/post/${post.slug}`}>{post.title}</Link>
-      </h3>
-      <h4>
-        {post.subtitle} Published: <RelativeDate date={post.publishedAt} />
-      </h4>
-      <h5>
+      </h2>
+      <p>{post.subtitle}</p>
+      <span>
+        <FontAwesomeIcon icon={faCalendarDay} className="pr-2" />
+        Posted: <RelativeDate date={post.publishedAt} />
+      </span>
+      <span>
+        <FontAwesomeIcon icon={faFolderOpen} className="px-2" />
         Filed under: <PostCategoriesMap categories={post.categories} />
-      </h5>
-      <h6>
+        <FontAwesomeIcon icon={faTags} className="px-2" />
         Tags: <PostTagsMap tags={post.tags} />
-      </h6>
-      <RichText
-        content={post.content.json}
-        references={post.content.references}
-      />
+        <FontAwesomeIcon icon={faComment} className="px-2" />
+        Comments (0)
+      </span>
     </div>
   )
 }

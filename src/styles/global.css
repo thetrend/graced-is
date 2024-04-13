@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  background-color: #e8e8e8;
+  background-color: #fef9eb;
 }
 
 .drawer {
@@ -14,18 +14,15 @@ body {
     md:transform-none 
     top-0 
     h-screen 
-    bg-[#f7f2f7] 
-    border-r 
-    shadow-md 
+    bg-[#233d43]
+    text-[#fef9eb] 
     md:py-6 
     pt-2 
     pb-6 
     flex 
     flex-col 
-    justify-between 
-    ease-in-out 
-    transition-all 
-    duration-300
+    justify-between
+    w-[250px]
 }
 
 .side-nav {
@@ -37,11 +34,20 @@ body {
     ;
     &:hover {
       @apply
-        bg-pink-200
-      ;
+        bg-[#000000]
     }
-    @media (max-width: 767px) {
-      font-size: xx-large;
+  }
+}
+
+.prose {
+  a {
+    font-weight: bold;
+    text-decoration: none;
+    padding-bottom: 6px;
+    color: #d81159;
+    &:hover {
+      padding-bottom: 2px;
+      border-bottom: 4px solid #000;
     }
   }
 }

@@ -1,37 +1,50 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars, faX } from '@fortawesome/free-solid-svg-icons'
-import { useState } from 'react'
+import {
+  faGithub,
+  faLinkedin,
+  faSpotify,
+} from '@fortawesome/free-brands-svg-icons'
 import NavLinks from './NavLinks'
-import siteLogo from '../assets/icon.svg'
+
+// function CountCategoryPosts({ slug }: { slug: string }) {
+//   const { data, loading } = useQuery(GetCategoryPostCountDocument, {
+//     variables: { slug },
+//   })
+//   const count = data?.categoriesConnection?.aggregate?.count
+//   return !loading && <>({count ?? 0})</>
+// }
 
 function Drawer() {
-  const [toggleMenu, setToggleMenu] = useState(false)
-  const handleToggleMenu = () => {
-    setToggleMenu(!toggleMenu)
-  }
   return (
-    <div className="flex flex-row w-full md:w-2/5">
-      <FontAwesomeIcon
-        icon={!toggleMenu ? faBars : faX}
-        size="2x"
-        className="md:hidden p-8 fixed top-0 right-0 z-10"
-        onClick={handleToggleMenu}
-      />
-      <aside
-        className={`
-        drawer
-        ${toggleMenu ? 'translate-x-0' : '-translate-x-full'}`}
-      >
-        <NavLinks />
-        <div className="p-6 pb-12 md:pb-0 text-center">
-          <img
-            src={siteLogo}
-            alt="graced.is logo"
-            className="md:w-full w-2/3 mx-auto"
-          />
-        </div>
-      </aside>
-    </div>
+    <aside className="drawer">
+      <NavLinks />
+      <div className="flex flex-row px-6 justify-around">
+        <a
+          href="https://linkedin.com/in/thetrend"
+          rel="noopener noreferrer"
+          aria-label="LinkedIn"
+          target="_blank"
+        >
+          <FontAwesomeIcon size="2x" icon={faLinkedin} />
+        </a>
+        <a
+          href="https://github.com/thetrend"
+          rel="noopener noreferrer"
+          aria-label="Github"
+          target="_blank"
+        >
+          <FontAwesomeIcon size="2x" icon={faGithub} />
+        </a>
+        <a
+          href="https://open.spotify.com/playlist/148pHWD3SgVHytpp49oudQ?si=aAXtpGQlR3SLhAbbIir0Tg&pi=u-0-q7x9cCTWeL"
+          rel="noopener noreferrer"
+          aria-label="Spotify"
+          target="_blank"
+        >
+          <FontAwesomeIcon size="2x" icon={faSpotify} />
+        </a>
+      </div>
+    </aside>
   )
 }
 
