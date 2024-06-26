@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCalendarDay,
-  faComment,
   faFolderOpen,
   faTags,
 } from '@fortawesome/free-solid-svg-icons'
@@ -15,17 +14,19 @@ function RelativeDate({ date }: { date: Scalars['DateTime']['output'] }) {
 
 function PostCategoriesMap({ categories }: { categories: Category[] }) {
   return categories.map((category: Category) => (
-    <Link to={`/categories/${category.slug}`} key={category.id}>
-      {category.title}
-    </Link>
+    // <Link to={`/categories/${category.slug}`} key={category.id}>
+    //   {category.title}
+    // </Link>
+    <strong key={category.id}>{category.title}</strong>
   ))
 }
 
 function PostTagsMap({ tags }: { tags: Tag[] }) {
   return tags.map((tag: Tag) => (
-    <Link to={`/tags/${tag.slug}`} key={tag.id}>
-      {tag.title}
-    </Link>
+    // <Link to={`/tags/${tag.slug}`} key={tag.id}>
+    //   {tag.title}
+    // </Link>
+    <strong key={tag.id}>{tag.title}</strong>
   ))
 }
 
@@ -45,8 +46,8 @@ function PostSnippet({ post }: { post: Post }) {
         Filed under: <PostCategoriesMap categories={post.categories} />
         <FontAwesomeIcon icon={faTags} className="px-2" />
         Tags: <PostTagsMap tags={post.tags} />
-        <FontAwesomeIcon icon={faComment} className="px-2" />
-        Comments (0)
+        {/* <FontAwesomeIcon icon={faComment} className="px-2" />
+        Comments (0) */}
       </span>
     </div>
   )

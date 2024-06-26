@@ -6,7 +6,6 @@ import { GetPostQuery } from '../gql'
 import NotFound from './NotFound'
 import { Post } from '../gql/generated/graphql'
 import { RelativeDate } from '../components/Helpers'
-import Comments from '../components/Comments'
 
 function BlogPost() {
   const { slug } = useParams()
@@ -53,7 +52,7 @@ function BlogPost() {
               Last Updated: <RelativeDate date={post.updatedAt} />
             </em>
           </article>
-          <Comments post={post} />
+          {/* <Comments post={post} /> */}
         </>
       )
     )

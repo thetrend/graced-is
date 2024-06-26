@@ -414,31 +414,8 @@ export type AssetUpdateManyInlineInput = {
 }
 
 export type AssetUpdateManyInput = {
-  fileName?: InputMaybe<Scalars['String']['input']>
-  /** Optional updates to localizations */
-  localizations?: InputMaybe<AssetUpdateManyLocalizationsInput>
-  /** Use this to define if its a reupload for the asset */
-  reUpload?: InputMaybe<Scalars['Boolean']['input']>
-  /** Optionally the system can upload a file for you, for that you need to provide a publicly accessible url */
-  uploadUrl?: InputMaybe<Scalars['String']['input']>
-}
-
-export type AssetUpdateManyLocalizationDataInput = {
-  fileName?: InputMaybe<Scalars['String']['input']>
-  /** Use this to define if its a reupload for the asset */
-  reUpload?: InputMaybe<Scalars['Boolean']['input']>
-  /** Optionally the system can upload a file for you, for that you need to provide a publicly accessible url */
-  uploadUrl?: InputMaybe<Scalars['String']['input']>
-}
-
-export type AssetUpdateManyLocalizationInput = {
-  data: AssetUpdateManyLocalizationDataInput
-  locale: Locale
-}
-
-export type AssetUpdateManyLocalizationsInput = {
-  /** Localizations to update */
-  update?: InputMaybe<Array<AssetUpdateManyLocalizationInput>>
+  /** No fields in updateMany data input */
+  _?: InputMaybe<Scalars['String']['input']>
 }
 
 export type AssetUpdateManyWithNestedWhereInput = {
@@ -8568,6 +8545,23 @@ export type GetTagsQuery = {
   >
 }
 
+export type ThoughtFieldsFragment = {
+  __typename?: 'Thought'
+  content?: string | null
+  updatedAt: any
+} & { ' $fragmentName'?: 'ThoughtFieldsFragment' }
+
+export type GetThoughtsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetThoughtsQuery = {
+  __typename?: 'Query'
+  thoughts: Array<
+    { __typename?: 'Thought' } & {
+      ' $fragmentRefs'?: { ThoughtFieldsFragment: ThoughtFieldsFragment }
+    }
+  >
+}
+
 export const CommentFieldsFragmentDoc = {
   kind: 'Document',
   definitions: [
@@ -8871,6 +8865,26 @@ export const PostFieldsFragmentDoc = {
     },
   ],
 } as unknown as DocumentNode<PostFieldsFragment, unknown>
+export const ThoughtFieldsFragmentDoc = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ThoughtFields' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Thought' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'content' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ThoughtFieldsFragment, unknown>
 export const GetCategoriesDocument = {
   kind: 'Document',
   definitions: [
@@ -9823,3 +9837,58 @@ export const GetTagsDocument = {
     },
   ],
 } as unknown as DocumentNode<GetTagsQuery, GetTagsQueryVariables>
+export const GetThoughtsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'getThoughts' },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'thoughts' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'last' },
+                value: { kind: 'IntValue', value: '1' },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'stage' },
+                value: { kind: 'EnumValue', value: 'PUBLISHED' },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                {
+                  kind: 'FragmentSpread',
+                  name: { kind: 'Name', value: 'ThoughtFields' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+    {
+      kind: 'FragmentDefinition',
+      name: { kind: 'Name', value: 'ThoughtFields' },
+      typeCondition: {
+        kind: 'NamedType',
+        name: { kind: 'Name', value: 'Thought' },
+      },
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          { kind: 'Field', name: { kind: 'Name', value: 'content' } },
+          { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<GetThoughtsQuery, GetThoughtsQueryVariables>

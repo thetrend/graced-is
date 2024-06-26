@@ -43,6 +43,10 @@ const documents = {
     types.TagFieldsFragmentDoc,
   '\n  query GetTags {\n    tags(stage: PUBLISHED) {\n      ...TagFields\n    }\n  }\n  \n':
     types.GetTagsDocument,
+  '\n  fragment ThoughtFields on Thought {\n    content\n    updatedAt\n  }\n':
+    types.ThoughtFieldsFragmentDoc,
+  '\n  query getThoughts {\n    thoughts(last: 1, stage: PUBLISHED) {\n      ...ThoughtFields\n    }\n  }\n  \n':
+    types.GetThoughtsDocument,
 }
 
 /**
@@ -149,6 +153,18 @@ export function gql(
 export function gql(
   source: '\n  query GetTags {\n    tags(stage: PUBLISHED) {\n      ...TagFields\n    }\n  }\n  \n'
 ): (typeof documents)['\n  query GetTags {\n    tags(stage: PUBLISHED) {\n      ...TagFields\n    }\n  }\n  \n']
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: '\n  fragment ThoughtFields on Thought {\n    content\n    updatedAt\n  }\n'
+): (typeof documents)['\n  fragment ThoughtFields on Thought {\n    content\n    updatedAt\n  }\n']
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: '\n  query getThoughts {\n    thoughts(last: 1, stage: PUBLISHED) {\n      ...ThoughtFields\n    }\n  }\n  \n'
+): (typeof documents)['\n  query getThoughts {\n    thoughts(last: 1, stage: PUBLISHED) {\n      ...ThoughtFields\n    }\n  }\n  \n']
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {}

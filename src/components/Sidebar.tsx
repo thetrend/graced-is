@@ -16,17 +16,23 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { DateTime } from 'luxon'
 import { Fragment } from 'react'
-import { CurrentlyPost } from '../gql/generated/graphql'
+import { CurrentlyPost, Thought } from '../gql/generated/graphql'
 import { GetCurrentlyPostsQuery } from '../gql/CurrentlyPosts'
+import { GetThoughtQuery } from '../gql/Thoughts'
 
 function Sidebar() {
   const { data: currentlyData, loading: currentlyLoading } = useQuery(
     GetCurrentlyPostsQuery
   )
 
+  const { data: thoughtData, loading: thoughtLoading } =
+    useQuery(GetThoughtQuery)
+
+  console.log(thoughtData)
+
   return (
-    <div className="flex md:flex-row justify-evenly flex-col">
-      <section className="prose w-full bg-[#ffdc99] hover:bg-[#ffbf47] text-black p-6 rounded-md">
+    <div className="footer-container">
+      <section className="prose currently">
         <h4>Currently</h4>
         {!currentlyLoading && currentlyData && (
           <>
@@ -111,8 +117,23 @@ function Sidebar() {
           </>
         )}
       </section>
-      <section className="prose w-full bg-[#8ecaf6] hover:bg-[#54aff1] text-black p-6 rounded-md">
+      <section className="prose thought">
         <h4>Thoughts</h4>
+        {!thoughtLoading && thoughtData && (
+          <>
+            {thoughtData.thoughts.map((thought: Thought) => (
+              <Fragment key={thought.updatedAt}>
+                <p>{thought.content}</p>
+                <p>
+                  Posted on:{' '}
+                  {DateTime.fromISO(thought.updatedAt).toLocaleString(
+                    DateTime.DATETIME_FULL
+                  )}
+                </p>
+              </Fragment>
+            ))}
+          </>
+        )}
       </section>
     </div>
   )
