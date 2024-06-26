@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client'
 import { useParams } from 'react-router-dom'
 import { RichText } from '@graphcms/rich-text-react-renderer'
-import { DateTime } from 'luxon'
 import { GetPageQuery } from '../gql'
 import { Page } from '../gql/generated/graphql'
 import NotFound from './NotFound'
+import { RelativeDate } from '../components/Helpers'
 
 function BlogPage() {
   const { slug } = useParams()
@@ -21,7 +21,7 @@ function BlogPage() {
 
     return (
       page && (
-        <>
+        <div className="prose">
           <h1>{page.title}</h1>
           {page.subtitle && <h2>{page.subtitle}</h2>}
           <RichText
@@ -29,10 +29,9 @@ function BlogPage() {
             references={page.content.references}
           />
           <em>
-            Last Updated:{' '}
-            {DateTime.fromISO(page.updatedAt).toRelativeCalendar()}
+            Last Updated: <RelativeDate date={page.updatedAt} />
           </em>
-        </>
+        </div>
       )
     )
   }

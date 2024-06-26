@@ -5,19 +5,25 @@ import { Page } from '../gql/generated/graphql'
 
 function NavLinks() {
   const { data, loading } = useQuery(GetPagesQuery)
+  // const { data: catData, loading: catLoading } = useQuery(GetCategoriesQuery)
 
   return (
     !loading && (
-      <ul>
-        <li className="inline-block">
-          <Link to="/">Home</Link>
-        </li>
+      <menu className="side-nav md:mt-0 mt-20">
+        <Link to="/">Home</Link>
         {data.pages.map((page: Page) => (
-          <li className="inline-block ml-4" key={page.id}>
-            <Link to={`/page/${page.slug}`}>{page.title}</Link>
-          </li>
+          <Link to={`/page/${page.slug}`} key={page.id}>
+            {page.title}
+          </Link>
         ))}
-      </ul>
+        {/* {!catLoading &&
+          catData &&
+          catData.categories.map((category: Category) => (
+            <Link to={`/categories/${category.slug}`}>{category.title}</Link>
+          ))}
+        <Link to="/tags/">Tags</Link> */}
+        {/* <Link to="/page/contact">Contact</Link> */}
+      </menu>
     )
   )
 }

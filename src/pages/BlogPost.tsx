@@ -1,10 +1,11 @@
 import { useQuery } from '@apollo/client'
 import { useParams } from 'react-router-dom'
 import { RichText } from '@graphcms/rich-text-react-renderer'
-import { DateTime } from 'luxon'
+import { Helmet } from 'react-helmet'
 import { GetPostQuery } from '../gql'
 import NotFound from './NotFound'
 import { Post } from '../gql/generated/graphql'
+import { RelativeDate } from '../components/Helpers'
 
 function BlogPost() {
   const { slug } = useParams()
@@ -16,22 +17,42 @@ function BlogPost() {
     const { post }: { post: Post } = data
 
     if (!post) {
-      return <NotFound />
+      return (
+        <div className="prose">
+          <NotFound />
+        </div>
+      )
     }
 
     return (
       post && (
         <>
-          <h1>{post.title}</h1>
-          {post.subtitle && <h2>{post.subtitle}</h2>}
-          <RichText
-            content={post.content.json}
-            references={post.content.references}
-          />
-          <em>
-            Last Updated:{' '}
-            {DateTime.fromISO(post.updatedAt).toRelativeCalendar()}
-          </em>
+          <Helmet>
+            <title>{post.title} &middot; graced.is</title>
+            <meta
+              property="og:title"
+              content={`${post.title} &middot; graced.is`}
+            />
+            <meta
+              name="description"
+              content={post.subtitle ?? 'A blog post from Grace de la Mora'}
+            />
+            <meta
+              property="og:description"
+              content={post.subtitle ?? 'A blog post from Grace de la Mora'}
+            />
+          </Helmet>
+          <article className="prose pb-10">
+            <h1>{post.title}</h1>
+            <RichText
+              content={post.content.json}
+              references={post.content.references}
+            />
+            <em>
+              Last Updated: <RelativeDate date={post.updatedAt} />
+            </em>
+          </article>
+          {/* <Comments post={post} /> */}
         </>
       )
     )

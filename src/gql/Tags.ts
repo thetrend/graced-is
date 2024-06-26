@@ -8,5 +8,12 @@ const TagFields = gql`
   }
 `
 
-// eslint-disable-next-line import/prefer-default-export
-export { TagFields }
+const GetTagsQuery = gql`
+  query GetTags {
+    tags(stage: PUBLISHED) {
+      ...TagFields
+    }
+  }
+  ${TagFields}
+`
+export { TagFields, GetTagsQuery }
