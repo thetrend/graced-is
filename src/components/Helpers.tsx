@@ -39,7 +39,7 @@ function PostSnippet({ post }: { post: Post }) {
       <p>{post.subtitle}</p>
       <span>
         <FontAwesomeIcon icon={faCalendarDay} className="pr-2" />
-        Posted: <RelativeDate date={post.publishedAt} />
+        Posted: <RelativeDate date={post.createdAt} />
       </span>
       <span>
         <FontAwesomeIcon icon={faFolderOpen} className="px-2" />
