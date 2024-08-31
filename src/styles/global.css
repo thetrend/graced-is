@@ -61,18 +61,18 @@ body {
 }
 .footer-container .currently {
   @apply
-    bg-[#ffdc99] 
-    hover:bg-[#ffbf47] 
     mb-6 
     md:mb-0 
     mt-6 
     md:mt-0
+    bg-[#8ecaf6] 
+    hover:bg-[#54aff1]
 }
 
 .footer-container .thought {
   @apply
-    bg-[#8ecaf6] 
-    hover:bg-[#54aff1] 
+    bg-[#ffdc99] 
+    hover:bg-[#ffbf47] 
 }
 
 

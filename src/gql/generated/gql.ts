@@ -33,7 +33,7 @@ const documents = {
     types.GetPagesDocument,
   '\n  query GetPage($slug: String!) {\n    page(where: { slug: $slug }, stage: PUBLISHED) {\n      ...PageFields\n    }\n  }\n  \n':
     types.GetPageDocument,
-  '\n  fragment PostFields on Post {\n    id\n    publishedAt\n    updatedAt\n    title\n    subtitle\n    content {\n      references {\n        ... on Asset {\n          id\n          url\n        }\n      }\n      json\n    }\n    publishedBy {\n      name\n      picture\n    }\n    slug\n    categories {\n      ...CategoryFields\n    }\n    tags {\n      ...TagFields\n    }\n  }\n  \n  \n':
+  '\n  fragment PostFields on Post {\n    id\n    createdAt\n    publishedAt\n    updatedAt\n    title\n    subtitle\n    content {\n      references {\n        ... on Asset {\n          id\n          url\n        }\n      }\n      json\n    }\n    publishedBy {\n      name\n      picture\n    }\n    slug\n    categories {\n      ...CategoryFields\n    }\n    tags {\n      ...TagFields\n    }\n  }\n  \n  \n':
     types.PostFieldsFragmentDoc,
   '\n  query GetPosts {\n    posts(stage: PUBLISHED, orderBy: id_DESC) {\n      ...PostFields\n    }\n  }\n  \n':
     types.GetPostsDocument,
@@ -127,8 +127,8 @@ export function gql(
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: '\n  fragment PostFields on Post {\n    id\n    publishedAt\n    updatedAt\n    title\n    subtitle\n    content {\n      references {\n        ... on Asset {\n          id\n          url\n        }\n      }\n      json\n    }\n    publishedBy {\n      name\n      picture\n    }\n    slug\n    categories {\n      ...CategoryFields\n    }\n    tags {\n      ...TagFields\n    }\n  }\n  \n  \n'
-): (typeof documents)['\n  fragment PostFields on Post {\n    id\n    publishedAt\n    updatedAt\n    title\n    subtitle\n    content {\n      references {\n        ... on Asset {\n          id\n          url\n        }\n      }\n      json\n    }\n    publishedBy {\n      name\n      picture\n    }\n    slug\n    categories {\n      ...CategoryFields\n    }\n    tags {\n      ...TagFields\n    }\n  }\n  \n  \n']
+  source: '\n  fragment PostFields on Post {\n    id\n    createdAt\n    publishedAt\n    updatedAt\n    title\n    subtitle\n    content {\n      references {\n        ... on Asset {\n          id\n          url\n        }\n      }\n      json\n    }\n    publishedBy {\n      name\n      picture\n    }\n    slug\n    categories {\n      ...CategoryFields\n    }\n    tags {\n      ...TagFields\n    }\n  }\n  \n  \n'
+): (typeof documents)['\n  fragment PostFields on Post {\n    id\n    createdAt\n    publishedAt\n    updatedAt\n    title\n    subtitle\n    content {\n      references {\n        ... on Asset {\n          id\n          url\n        }\n      }\n      json\n    }\n    publishedBy {\n      name\n      picture\n    }\n    slug\n    categories {\n      ...CategoryFields\n    }\n    tags {\n      ...TagFields\n    }\n  }\n  \n  \n']
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

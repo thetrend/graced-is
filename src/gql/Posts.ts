@@ -5,6 +5,7 @@ import { TagFields } from './Tags'
 const PostFields = gql`
   fragment PostFields on Post {
     id
+    createdAt
     publishedAt
     updatedAt
     title
