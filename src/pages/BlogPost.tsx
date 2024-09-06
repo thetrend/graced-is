@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet'
 import { GetPostQuery } from '../gql'
 import NotFound from './NotFound'
 import { Post } from '../gql/generated/graphql'
-import { RelativeDate } from '../components/Helpers'
+import { RelativeDate } from '../utils/Helpers'
 
 function BlogPost() {
   const { slug } = useParams()

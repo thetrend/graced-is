@@ -9,7 +9,6 @@ body {
 .drawer {
   @apply
     fixed 
-    md:relative 
     md:sticky 
     md:transform-none 
     top-0 
