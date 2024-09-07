@@ -24,7 +24,9 @@
     "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": [
+    "backend",
     "src",
+    "generate-env.js",
     "codegen.ts",
     "vite.config.ts",
     "postcss.config.js",

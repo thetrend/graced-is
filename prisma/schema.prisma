@@ -1,0 +1,133 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  email    String   @unique
+  username String
+  display  String
+  timezone DateTime
+  Post     Post[]
+}
+
+model Post {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  slug        String     @unique
+  title       String
+  subtitle    String
+  content     String
+  status      Status     @default(Draft)
+  author      User       @relation(fields: [authorId], references: [id])
+  authorId    String     @unique @db.ObjectId
+  categories  Category[] @relation(fields: [categoryIDs], references: [id])
+  categoryIDs String[]   @db.ObjectId
+  tags        Tag[]      @relation(fields: [tagIDs], references: [id])
+  tagIDs      String[]   @db.ObjectId
+  comments    Comment[]
+  createdAt   DateTime
+  publishedAt DateTime
+  updatedAt   DateTime
+}
+
+enum Status {
+  Draft
+  Published
+}
+
+model Category {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  title   String
+  slug    String
+  posts   Post[]   @relation(fields: [postIDs], references: [id])
+  postIDs String[] @db.ObjectId
+}
+
+model Tag {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  title   String
+  slug    String
+  posts   Post[]   @relation(fields: [postIDs], references: [id])
+  postIDs String[] @db.ObjectId
+}
+
+model Page {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug        String   @unique
+  title       String
+  content     String
+  status      Status   @default(Draft)
+  createdAt   DateTime
+  publishedAt DateTime
+  updatedAt   DateTime
+}
+
+model Thought {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  content     String
+  createdAt   DateTime
+  publishedAt DateTime
+  updatedAt   DateTime
+}
+
+model Currently {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  weather     Weather  @default(Clear)
+  location    String?
+  food        String?
+  beverage    String?
+  action      String?
+  emotion     String?
+  tv_movie    String?
+  music       String?
+  book        String?
+  game        String?
+  createdAt   DateTime
+  publishedAt DateTime
+  updatedAt   DateTime
+}
+
+enum Weather {
+  Clear
+  Cloudy
+  Rainy
+  Snowy
+  Windy
+  Foggy
+}
+
+model Comment {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  name        String        @default("Anonymous")
+  comment     String
+  post        Post          @relation(fields: [postId], references: [id])
+  postId      String        @db.ObjectId
+  status      CommentStatus @default(Review)
+  createdAt   DateTime
+  publishedAt DateTime
+}
+
+enum CommentStatus {
+  Review
+  Approved
+  Denied
+}
+
+model SiteSettings {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  title    String
+  tagline  String
+  url      String
+  timezone String
+}

@@ -1,8 +1,22 @@
 [build]
-  command = "vite build"
-  publish = "dist"
+command = "vite build"
+functions = "backend/functions"
+edge_functions = "backend/edge-functions"
+publish = "dist"
 
-  [[redirects]]
-    from = "/*"
-    to = "/index.html"
-    status = 200
+[functions]
+node_bundler = "esbuild"
+
+[[redirects]]
+from = "/api/functions/*"
+to = "/.netlify/functions/:splat"
+status = 200
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+
+[[edge_functions]]
+function = "register"
+path = "/register"
