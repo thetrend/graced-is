@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
@@ -16,32 +13,46 @@ generator client {
 }
 
 model User {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  email    String @unique
-  password String
-  username String @unique
-  display  String
-  timezone String
-  Post     Post[]
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  email         String         @unique // user's email address
+  password      String // user's hashed password
+  username      String         @unique // user's username for URL/identification purposes
+  display       String // user's display name
+  timezone      String // user's timezone (America/New_York format)
+  posts         Post[] // user's collection of associated posts
+  refreshTokens RefreshToken[] // user's collection of associated refresh tokens
+
+  @@index([email, username], name: "email_username")
+}
+
+model RefreshToken {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  token     String   @unique // store a hashed version of the token
+  user      User     @relation(fields: [userId], references: [id]) // associated user
+  userId    String   @db.ObjectId // associated user's ID
+  createdAt DateTime @default(now()) // Track creation time for expiration management
+  expiresAt DateTime // Store expiration time
 }
 
 model Post {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  slug        String     @unique
-  title       String
-  subtitle    String
-  content     String
-  status      Status     @default(Draft)
-  author      User       @relation(fields: [authorId], references: [id])
-  authorId    String     @unique @db.ObjectId
-  categories  Category[] @relation(fields: [categoryIDs], references: [id])
-  categoryIDs String[]   @db.ObjectId
-  tags        Tag[]      @relation(fields: [tagIDs], references: [id])
-  tagIDs      String[]   @db.ObjectId
-  comments    Comment[]
-  createdAt   DateTime
-  publishedAt DateTime
-  updatedAt   DateTime
+  title       String // post title
+  slug        String     @unique // URL-safe version of title
+  subtitle    String // sentence description of post
+  content     String // post content
+  draft       String // post content draft if there are any unpublished changes
+  status      Status     @default(Draft) // enum of draft/published status
+  author      User       @relation(fields: [authorId], references: [id]) // associated user
+  authorId    String     @db.ObjectId // associated user's ID
+  categories  Category[] @relation(fields: [categoryIDs], references: [id]) // associated category or categories
+  categoryIDs String[]   @db.ObjectId // associated category IDs
+  tags        Tag[]      @relation(fields: [tagIDs], references: [id]) // associated tag(s)
+  tagIDs      String[]   @db.ObjectId // associated tag IDs
+  comments    Comment[] // associated comment(s)
+  commentIDs  String[]   @db.ObjectId // associated comment IDs
+  createdAt   DateTime // original timestamp of when the content was started, given by the frontend
+  publishedAt DateTime   @default(now()) // now timestamp, only to be upserted on creation
+  updatedAt   DateTime   @default(now()) // now timestamp, only to be upserted on edit
 }
 
 enum Status {
@@ -50,55 +61,57 @@ enum Status {
 }
 
 model Category {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  title   String
-  slug    String
-  posts   Post[]   @relation(fields: [postIDs], references: [id])
-  postIDs String[] @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String // category title
+  slug      String   @unique // URL-safe version of title
+  posts     Post[]   @relation(fields: [postIDs], references: [id]) // associated posts
+  postIDs   String[] @db.ObjectId // associated post IDs
+  createdAt DateTime @default(now()) // now timestamp, only to be upserted on creation
 }
 
 model Tag {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  title   String
-  slug    String
-  posts   Post[]   @relation(fields: [postIDs], references: [id])
-  postIDs String[] @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String // tag title
+  slug      String   @unique // URL-safe version of title
+  posts     Post[]   @relation(fields: [postIDs], references: [id]) // associated posts
+  postIDs   String[] @db.ObjectId // associated post IDs
+  createdAt DateTime @default(now()) // now timestamp, only to be upserted on creation
 }
 
 model Page {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  slug        String   @unique
-  title       String
-  content     String
-  status      Status   @default(Draft)
-  createdAt   DateTime
-  publishedAt DateTime
-  updatedAt   DateTime
+  title       String // page title
+  slug        String   @unique // URL-safe version of title
+  content     String // page content
+  draft       String // post content draft if there are any unpublished changes
+  status      Status   @default(Draft) // enum of draft/published status
+  createdAt   DateTime // original timestamp of when the content was started, given by the frontend
+  publishedAt DateTime @default(now()) // now timestamp, only to be upserted on creation
+  updatedAt   DateTime @default(now()) // now timestamp, only to be upserted on edit
 }
 
 model Thought {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  content     String
-  createdAt   DateTime
-  publishedAt DateTime
-  updatedAt   DateTime
+  content     String // thought content ("tweet/thread")
+  createdAt   DateTime // original timestamp of when the content was started, given by the frontend
+  publishedAt DateTime @default(now()) // now timestamp, only to be upserted on creation
+  updatedAt   DateTime @default(now()) // now timestamp, only to be upserted on edit
 }
 
 model Currently {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  weather     Weather  @default(Clear)
-  location    String?
-  food        String?
-  beverage    String?
-  action      String?
-  emotion     String?
-  tv_movie    String?
-  music       String?
-  book        String?
-  game        String?
-  createdAt   DateTime
-  publishedAt DateTime
-  updatedAt   DateTime
+  weather     Weather  @default(Clear) // enum of weather options
+  location    String? // optional current location
+  food        String? // optional current food 
+  drink       String? // optional current drink
+  task        String? // optional current task
+  emotion     String? // optional current feeling
+  tv_movie    String? // optional current tv/movie
+  music       String? // optional current music
+  book        String? // optional current book
+  game        String? // optional current game
+  createdAt   DateTime // original timestamp of when the content was started, given by the frontend
+  publishedAt DateTime @default(now()) // now timestamp, only to be upserted on creation
 }
 
 enum Weather {
@@ -112,13 +125,13 @@ enum Weather {
 
 model Comment {
   id          String        @id @default(auto()) @map("_id") @db.ObjectId
-  name        String        @default("Anonymous")
-  comment     String
-  post        Post          @relation(fields: [postId], references: [id])
-  postId      String        @db.ObjectId
-  status      CommentStatus @default(Review)
-  createdAt   DateTime
-  publishedAt DateTime
+  name        String        @default("Anonymous") // commenter name, defaults to Anonymous
+  comment     String // content
+  post        Post          @relation(fields: [postId], references: [id]) // associated post
+  postId      String        @db.ObjectId // associated post ID
+  status      CommentStatus @default(Review) // enum of comment status, will be updated once I implement Akismet
+  createdAt   DateTime // original timestamp of when the content was started, given by the frontend
+  publishedAt DateTime      @default(now()) // now timestamp, only to be upserted on creation
 }
 
 enum CommentStatus {
@@ -128,9 +141,9 @@ enum CommentStatus {
 }
 
 model SiteSettings {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  title    String
-  tagline  String
-  url      String
-  timezone String
+  id       String @id @default(auto()) @map("_id") @db.ObjectId // only including this so Prisma will stop yelling
+  title    String // Site title
+  tagline  String // Site tagline
+  url      String // Site URL
+  timezone String // Site timezone
 }

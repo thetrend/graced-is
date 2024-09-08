@@ -1,11 +1,13 @@
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import _ from 'lodash'
+import { DateTime } from 'luxon'
 
 import type { Handler, HandlerEvent } from '@netlify/functions'
 
 import getPrismaClient from '../utils/prisma'
 import { verifyPostMethod } from '../utils/netlify'
+import { generateAccessToken, generateRefreshToken } from '../utils/tokens'
 
 const prisma = getPrismaClient()
 
@@ -50,7 +52,8 @@ const registrationSchema = z
     path: ['passwordConfirm'],
   })
 
-const handler: Handler = async (event: HandlerEvent) => {
+// eslint-disable-next-line import/prefer-default-export
+export const handler: Handler = async (event: HandlerEvent) => {
   verifyPostMethod(event)
 
   try {
@@ -89,9 +92,37 @@ const handler: Handler = async (event: HandlerEvent) => {
 
     const user = _.omit(prismaUser, ['password'])
 
+    // Generate tokens
+    const accessToken = generateAccessToken(user.id)
+    const refreshToken = generateRefreshToken(user.id)
+    const refreshTokenTTL =
+      Number(process.env.REFRESH_TOKEN_EXPIRES_IN!.replace('d', '')) || 7
+
+    const expiresAt = DateTime.now()
+      .plus({
+        days: refreshTokenTTL,
+      })
+      .toJSDate()
+
+    // Save refresh token in the database if needed
+    await prisma.refreshToken.create({
+      data: {
+        userId: user.id,
+        token: refreshToken,
+        expiresAt,
+      },
+    })
+
     return {
       statusCode: 201,
-      body: JSON.stringify({ message: 'User registered', user }),
+      headers: {
+        'Set-Cookie': `refreshToken=${refreshToken}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${60 * 60 * 24 * refreshTokenTTL}`, // 7 days
+      },
+      body: JSON.stringify({
+        message: 'User registered',
+        accessToken,
+        user,
+      }),
     }
   } catch (error) {
     const errorMessage =
@@ -108,6 +139,3 @@ const handler: Handler = async (event: HandlerEvent) => {
     }
   }
 }
-
-// eslint-disable-next-line import/prefer-default-export
-export { handler }
