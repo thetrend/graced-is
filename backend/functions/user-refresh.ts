@@ -30,7 +30,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
       where: { token: refreshToken },
     })
 
-    if (!existingToken || decodedToken.userId !== existingToken.userId) {
+    if (!existingToken || decodedToken?.userId !== existingToken.userId) {
       return {
         statusCode: 401,
         body: JSON.stringify({ error: 'Invalid refresh token' }),

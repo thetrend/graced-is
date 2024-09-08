@@ -15,8 +15,22 @@ export const generateRefreshToken = (userId: string) =>
     expiresIn: refreshTokenExpiresIn,
   })
 
-export const verifyAccessToken = (token: string) =>
-  jwt.verify(token, accessTokenSecret) as { userId: string }
+export const verifyAccessToken = (token: string) => {
+  try {
+    return jwt.verify(token, accessTokenSecret) as { userId: string }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error verifying access token: ', error)
+    return null
+  }
+}
 
-export const verifyRefreshToken = (token: string) =>
-  jwt.verify(token, refreshTokenSecret) as { userId: string }
+export const verifyRefreshToken = (token: string) => {
+  try {
+    return jwt.verify(token, refreshTokenSecret) as { userId: string }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error verifying refresh token: ', error)
+    return null
+  }
+}
