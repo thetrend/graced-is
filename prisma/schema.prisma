@@ -11,14 +11,17 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  // https://stackoverflow.com/questions/78410369/cannot-find-module-prisma-client-default-when-using-prisma-extension-paginati
+  output   = "../node_modules/.prisma/client"
 }
 
 model User {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  email    String   @unique
-  username String
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  email    String @unique
+  password String
+  username String @unique
   display  String
-  timezone DateTime
+  timezone String
   Post     Post[]
 }
 
