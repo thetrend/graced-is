@@ -1,7 +1,5 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import { Layout } from './themes/primarily/components'
-import { BlogPage, BlogPost, Contact, Home, NotFound } from './pages'
-import { AdminLayout, AdminHome, Register } from './admin/theme/default'
+import { AdminHome, AdminLayout, Register } from './admin/theme/default'
 
 const router = createBrowserRouter([
   {
@@ -15,29 +13,6 @@ const router = createBrowserRouter([
       {
         path: 'register',
         element: <Register />,
-      },
-    ],
-  },
-  {
-    path: '/',
-    element: <Layout />,
-    errorElement: <NotFound />,
-    children: [
-      {
-        index: true,
-        element: <Home />,
-      },
-      {
-        path: 'page/:slug',
-        element: <BlogPage />,
-      },
-      {
-        path: 'page/contact',
-        element: <Contact />,
-      },
-      {
-        path: 'post/:slug',
-        element: <BlogPost />,
       },
     ],
   },
