@@ -1,9 +1,11 @@
-import axios, { AxiosResponse } from 'axios'
+import axios, { type AxiosResponse } from 'axios'
 import { useState } from 'react'
 import { DateTime } from 'luxon'
 import { ZodError } from 'zod'
+import { useNavigate } from 'react-router-dom'
 import InputField from '../../../components/lib/InputField'
 import Alert from '../../../components/lib/Alert'
+import Card from '../../../components/lib/Card'
 
 interface RegisterFormState {
   email: string
@@ -53,6 +55,8 @@ function Register() {
   const [serverError, setServerError] = useState<string>('')
   const [successMessage, setSuccessMessage] = useState<string>('')
 
+  const navigate = useNavigate()
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prevState: RegisterFormState) => ({
@@ -69,38 +73,47 @@ function Register() {
     setSuccessMessage('')
 
     try {
-      // Always send the form data to the backend, let the backend handle the validation
       const apiResponse: AxiosResponse<RegisterApiResponse> = await axios.post(
         '/api/user/register',
-        formData
+        formData,
       )
 
       if (apiResponse.status === 201) {
-        setSuccessMessage(apiResponse.data.message)
+        localStorage.setItem('accessToken', apiResponse.data.accessToken)
+
+        // Set success message and wait before redirecting
+        setSuccessMessage(
+          `Thank you for registering, ${apiResponse.data.user.display}! You will be redirected shortly.`,
+        )
+
+        // Wait for a few seconds to display the success message
+        setTimeout(() => {
+          navigate('/home')
+        }, 2000) // Adjust time as needed
       } else {
         setServerError(apiResponse.data.message)
       }
     } catch (error) {
       if (error instanceof ZodError) {
         const formattedErrors: RegisterFormErrors = {}
-        error.errors.forEach((err) => {
+        for (const err of error.errors) {
           const pathKey = err.path[0] as keyof RegisterFormErrors
           if (pathKey) {
             formattedErrors[pathKey] = err.message
           }
-        })
+        }
         setErrors(formattedErrors)
       } else if (axios.isAxiosError(error) && error.response) {
         // Handle server-side validation errors
         const serverErrors = error.response.data.errors
         if (serverErrors && Array.isArray(serverErrors)) {
           const formattedErrors: RegisterFormErrors = {}
-          serverErrors.forEach((err: { path: string[]; message: string }) => {
+          for (const err of serverErrors) {
             const pathKey = err.path[0] as keyof RegisterFormErrors
             if (pathKey) {
               formattedErrors[pathKey] = err.message
             }
-          })
+          }
           setErrors(formattedErrors)
         } else {
           setServerError(error.response.data.message || 'An error occurred')
@@ -114,75 +127,77 @@ function Register() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 w-[50vw]">
-      <InputField
-        id="email"
-        type="email"
-        name="email"
-        value={formData.email}
-        onChange={handleChange}
-        placeholder="Email"
-        error={errors.email}
-        required
-      />
-      <InputField
-        id="username"
-        type="text"
-        name="username"
-        value={formData.username}
-        onChange={handleChange}
-        placeholder="Username"
-        error={errors.username}
-        required
-      />
-      <InputField
-        id="display"
-        type="text"
-        name="display"
-        value={formData.display}
-        onChange={handleChange}
-        placeholder="Display Name"
-        error={errors.display}
-        required
-      />
-      <InputField
-        id="password"
-        type="password"
-        name="password"
-        value={formData.password}
-        onChange={handleChange}
-        placeholder="Password"
-        error={errors.password}
-        required
-      />
-      <InputField
-        id="passwordConfirm"
-        type="password"
-        name="passwordConfirm"
-        value={formData.passwordConfirm}
-        onChange={handleChange}
-        placeholder="Confirm Password"
-        error={errors.passwordConfirm}
-        required
-      />
-      <InputField
-        id="timezone"
-        type="text"
-        name="timezone"
-        value={formData.timezone}
-        onChange={handleChange}
-        placeholder="Timezone"
-        readOnly
-        disabled
-      />
-
+    <Card className="md:w-2/5">
+      <h2 className="text-xl text-center font-bold">Register</h2>
       {serverError && <Alert type="error" message={serverError} />}
       {successMessage && <Alert type="success" message={successMessage} />}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <InputField
+          id="email"
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="Email"
+          error={errors.email}
+          required
+        />
+        <InputField
+          id="username"
+          type="text"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          placeholder="Username"
+          error={errors.username}
+          required
+        />
+        <InputField
+          id="display"
+          type="text"
+          name="display"
+          value={formData.display}
+          onChange={handleChange}
+          placeholder="Display Name"
+          error={errors.display}
+          required
+        />
+        <InputField
+          id="password"
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          placeholder="Password"
+          error={errors.password}
+          required
+        />
+        <InputField
+          id="passwordConfirm"
+          type="password"
+          name="passwordConfirm"
+          value={formData.passwordConfirm}
+          onChange={handleChange}
+          placeholder="Confirm Password"
+          error={errors.passwordConfirm}
+          required
+        />
+        <InputField
+          id="timezone"
+          type="text"
+          name="timezone"
+          value={formData.timezone}
+          onChange={handleChange}
+          placeholder="Timezone"
+          readOnly
+          disabled
+        />
 
-      <button type="submit" className="btn btn-primary w-full">
-        {isLoading ? 'Registering...' : 'Register'}
-      </button>
-    </form>
+        <button type="submit" className="btn btn-primary w-full">
+          {isLoading ? 'Registering...' : 'Register'}
+        </button>
+      </form>
+    </Card>
   )
 }
 

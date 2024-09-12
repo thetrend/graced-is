@@ -1,5 +1,9 @@
+import Register from './Register'
+
 function Home() {
-  return <>This is the home page</>
+  const authenticated = isAuthenticated()
+
+  return authenticated ? <>DASHBOARD</> : <Register />
 }
 
 export default Home

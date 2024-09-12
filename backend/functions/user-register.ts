@@ -1,95 +1,167 @@
 import bcrypt from 'bcryptjs'
-import { z } from 'zod'
 import _ from 'lodash'
-import { DateTime } from 'luxon'
 
-import type { Handler, HandlerEvent } from '@netlify/functions'
+import { DateTime } from 'luxon'
+import { z } from 'zod'
+
+import type { Handler, HandlerEvent, HandlerResponse } from '@netlify/functions'
 
 import getPrismaClient from '../utils/prisma'
+
+import { defaultTZ, registerSchema } from '../schemas/registerSchema'
 import { verifyPostMethod } from '../utils/netlify'
 import { generateAccessToken, generateRefreshToken } from '../utils/tokens'
-import { defaultTZ, registerSchema } from '../schemas/registerSchema'
 
 const prisma = getPrismaClient()
 
-const appendCustomErrors = (
+/**
+ * Takes a Zod error and some custom error messages, and merges the custom
+ * error messages into the Zod error.
+ *
+ * @param zodError The Zod error to merge into.
+ * @param customErrorMessages The custom error messages to merge in.
+ * @returns The merged Zod error.
+ */
+export const appendCustomErrors = (
   zodError: z.ZodError,
-  customErrors: { [key: string]: string }
-) => {
-  const existingErrors = zodError.errors
+  customErrorMessages: Record<string, string>,
+): z.ZodError => {
+  // Create an object that has the same shape as the Zod error, but with the
+  // custom error messages inserted.
+  const newErrors = Object.fromEntries(
+    // Iterate over the custom error messages, and convert each one into an
+    // object that has the same shape as the Zod error objects.
+    Object.entries(customErrorMessages).map(([field, message]) => [
+      field,
+      {
+        // The "path" property is an array of strings, and the "message"
+        // property is a string. The "path" property indicates which field in
+        // the input data the error refers to, and the "message" property is
+        // the error message itself.
+        path: [field],
+        message,
+        code: z.ZodIssueCode.custom,
+      },
+    ]),
+  )
 
-  const newErrors = Object.entries(customErrors).map(([key, message]) => ({
-    path: [key],
-    message,
-    code: z.ZodIssueCode.custom,
-  }))
+  // Concatenate the new object with the existing Zod error.
+  const allErrors = [...(zodError.errors ?? []), ...Object.values(newErrors)]
 
-  const allErrors = [...existingErrors, ...newErrors]
-
+  // Return the merged Zod error.
   return new z.ZodError(allErrors)
 }
 
-// eslint-disable-next-line import/prefer-default-export
-export const handler: Handler = async (event: HandlerEvent) => {
+/**
+ * Handle the user registration request.
+ *
+ * @param {HandlerEvent} event The event object passed to the handler.
+ * @returns {Promise<HandlerResponse>} The response object.
+ */
+export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
+  // Verify that the request is a POST request
   verifyPostMethod(event)
 
   try {
-    const data = JSON.parse(event.body!)
+    // Parse the request body into a JSON object
+    const userData = JSON.parse(event.body || '{}')
 
-    // First, check for custom errors like existing email
-    const userExists = await prisma.user.findFirst({
+    // Check if the username or email already exists in the database
+    const existingUser = await prisma.user.findFirst({
+      // Search for a user with the same email or username
       where: {
-        OR: [{ email: data.email }, { username: data.username }],
+        OR: [{ email: userData.email }, { username: userData.username }],
+      },
+      // Only select the id, email and username columns
+      select: {
+        id: true,
+        email: true,
+        username: true,
       },
     })
 
+    // Initialize an empty object to store custom errors
     const customErrors: { [key: string]: string } = {}
-    if (userExists) {
-      if (userExists.email === data.email) {
+
+    // If a user with the same email or username already exists, add a custom error
+    if (existingUser) {
+      if (existingUser.email === userData.email) {
         customErrors.email = 'Email already exists'
       }
-      if (userExists.username === data.username) {
+      if (existingUser.username === userData.username) {
         customErrors.username = 'Username already exists'
       }
     }
 
-    // Validate data with the register schema
-    const zodResult = registerSchema.safeParse(data)
+    // Parse the user data using the registerSchema
+    const parsedUserData = registerSchema.safeParse(userData)
 
-    if (!zodResult.success || Object.keys(customErrors).length > 0) {
-      throw appendCustomErrors(
-        zodResult.error || new z.ZodError([]),
+    // If there are any custom errors, append them to the Zod error
+    if (Object.keys(customErrors).length > 0) {
+      const error = appendCustomErrors(
+        parsedUserData.error || new z.ZodError([]),
         customErrors
       )
+
+      // Return a 400 response with the custom errors
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ errors: error.errors }),
+      }
     }
 
-    const { email, password, username, display, timezone } = data
+    // If the parsed user data is invalid, return a 400 response with the Zod errors
+    if (!parsedUserData.success) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ errors: parsedUserData.error?.errors }),
+      }
+    }
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+    // Extract the user data from the parsed user data
+    const {
+      email,
+      password,
+      username,
+      display,
+      timezone = defaultTZ,
+    } = parsedUserData.data
 
-    const prismaUser = await prisma.user.create({
+    // Create the user in the database
+    const user = await prisma.user.create({
       data: {
         email,
-        password: hashedPassword,
+        // Hash the password before storing it in the database
+        password: await bcrypt.hash(password, 10),
         username,
         display,
-        timezone: timezone || defaultTZ,
+        timezone,
       },
     })
 
-    const user = _.omit(prismaUser, ['password'])
+    // If the user was not created, throw an error
+    if (!user) {
+      throw new Error('Failed to create user')
+    }
 
+    // Generate an access token and a refresh token
     const accessToken = generateAccessToken(user.id)
     const refreshToken = generateRefreshToken(user.id)
-    const refreshTokenTTL =
-      Number(process.env.REFRESH_TOKEN_EXPIRES_IN!.replace('d', '')) || 7
 
-    const expiresAt = DateTime.now()
-      .plus({
-        days: refreshTokenTTL,
-      })
-      .toJSDate()
+    // Get the refresh token TTL from the environment variable
+    const refreshTokenTTL = Number(
+      (process.env.REFRESH_TOKEN_EXPIRES_IN || '7').replace('d', '')
+    )
 
+    // If the refresh token TTL is not a valid number, throw an error
+    if (Number.isNaN(refreshTokenTTL)) {
+      throw new Error('REFRESH_TOKEN_EXPIRES_IN is not a valid number')
+    }
+
+    // Calculate the expiration date for the refresh token
+    const expiresAt = DateTime.now().plus({ days: refreshTokenTTL }).toJSDate()
+
+    // Create a new refresh token in the database
     await prisma.refreshToken.create({
       data: {
         userId: user.id,
@@ -98,18 +170,21 @@ export const handler: Handler = async (event: HandlerEvent) => {
       },
     })
 
+    // Return a 201 response with the access token and the user data
     return {
       statusCode: 201,
       headers: {
-        'Set-Cookie': `refreshToken=${refreshToken}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${60 * 60 * 24 * refreshTokenTTL}`, // 7 days
+        // Set the refresh token as a cookie
+        'Set-Cookie': `refreshToken=${refreshToken}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${60 * 60 * 24 * refreshTokenTTL}`,
       },
       body: JSON.stringify({
         message: 'User registered',
         accessToken,
-        user,
+        user: _.omit(user, ['password']),
       }),
     }
   } catch (error) {
+    // If the error is a ZodError, return a 400 response with the Zod errors
     if (error instanceof z.ZodError) {
       return {
         statusCode: 400,
@@ -117,12 +192,12 @@ export const handler: Handler = async (event: HandlerEvent) => {
       }
     }
 
-    // Handle other errors
-    const errorMessage =
-      error instanceof Error ? error.message : 'An unknown error occurred'
+    // Return a 500 response with an error message
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: errorMessage }),
+      body: JSON.stringify({
+        message: error instanceof Error ? error.message : 'An unknown error occurred',
+      }),
     }
   }
 }

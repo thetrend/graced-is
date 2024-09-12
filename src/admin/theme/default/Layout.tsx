@@ -12,6 +12,7 @@ const StyledAdminApp = styled.div`
     flex-col
     items-center
     justify-center
+    bg-neutral
   `}
 `
 

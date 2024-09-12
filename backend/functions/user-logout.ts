@@ -13,7 +13,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
     const cookies = event.headers.cookie || ''
     const refreshToken = cookies
       .split('; ')
-      .find((row) => row.startsWith('refreshToken='))
+      .find(row => row.startsWith('refreshToken='))
       ?.split('=')[1]
 
     if (!refreshToken) {
