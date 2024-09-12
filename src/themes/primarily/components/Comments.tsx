@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/client'
 import { DateTime } from 'luxon'
 import Markdown from 'react-markdown'
-import { Comment, Post } from '../gql/generated/graphql'
-import { GetPostCommentsQuery } from '../gql/Comments'
+import { Comment, Post } from '../../../gql/generated/graphql'
+import { GetPostCommentsQuery } from '../../../gql/Comments'
 
 function SingleComment({ comment }: { comment: Comment }) {
   return (

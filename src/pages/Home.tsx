@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client'
 import { GetPostsQuery } from '../gql'
 import { Post } from '../gql/generated/graphql'
-import { PostSnippet } from '../components/Helpers'
+import { PostSnippet } from '../utils/Helpers'
 
 function Home() {
   const { data, loading } = useQuery(GetPostsQuery)

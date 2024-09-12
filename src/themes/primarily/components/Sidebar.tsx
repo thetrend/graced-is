@@ -16,9 +16,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { DateTime } from 'luxon'
 import { Fragment } from 'react'
-import { CurrentlyPost, Thought } from '../gql/generated/graphql'
-import { GetCurrentlyPostsQuery } from '../gql/CurrentlyPosts'
-import { GetThoughtQuery } from '../gql/Thoughts'
+import { CurrentlyPost, Thought } from '../../../gql/generated/graphql'
+import { GetCurrentlyPostsQuery } from '../../../gql/CurrentlyPosts'
+import { GetThoughtQuery } from '../../../gql/Thoughts'
 
 function Sidebar() {
   const { data: currentlyData, loading: currentlyLoading } = useQuery(

@@ -1,8 +1,22 @@
 [build]
-  command = "vite build"
-  publish = "dist"
+command = "vite build"
+functions = "backend/functions"
+publish = "dist"
 
-  [[redirects]]
-    from = "/*"
-    to = "/index.html"
-    status = 200
+[functions]
+node_bundler = "esbuild"
+
+[[redirects]]
+from = "/api/user/*"
+to = "/.netlify/functions/user-:splat"
+status = 200
+
+[[redirects]]
+from = "/api/admin/post/*"
+to = "/.netlify/functions/admin-post-:splat"
+status = 200
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
