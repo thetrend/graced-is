@@ -4,7 +4,7 @@ import _ from 'lodash'
 import { DateTime } from 'luxon'
 import { z } from 'zod'
 
-import type { Handler, HandlerEvent, HandlerResponse } from '@netlify/functions'
+import type { HandlerEvent, HandlerResponse } from '@netlify/functions'
 
 import getPrismaClient from '../utils/prisma'
 
@@ -64,7 +64,7 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
 
   try {
     // Parse the request body into a JSON object
-    const userData = JSON.parse(event.body || '{}')
+    const userData = JSON.parse(event.body ?? '{}')
 
     // Check if the username or email already exists in the database
     const existingUser = await prisma.user.findFirst({
@@ -84,13 +84,10 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
     const customErrors: { [key: string]: string } = {}
 
     // If a user with the same email or username already exists, add a custom error
-    if (existingUser) {
-      if (existingUser.email === userData.email) {
-        customErrors.email = 'Email already exists'
-      }
-      if (existingUser.username === userData.username) {
-        customErrors.username = 'Username already exists'
-      }
+    if (existingUser && existingUser.email === userData.email) {
+      customErrors.email = 'Email already exists'
+    } else if (existingUser && existingUser.username === userData.username) {
+      customErrors.username = 'Username already exists'
     }
 
     // Parse the user data using the registerSchema
@@ -100,7 +97,7 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
     if (Object.keys(customErrors).length > 0) {
       const error = appendCustomErrors(
         parsedUserData.error || new z.ZodError([]),
-        customErrors
+        customErrors,
       )
 
       // Return a 400 response with the custom errors
@@ -150,7 +147,7 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
 
     // Get the refresh token TTL from the environment variable
     const refreshTokenTTL = Number(
-      (process.env.REFRESH_TOKEN_EXPIRES_IN || '7').replace('d', '')
+      (process.env.REFRESH_TOKEN_EXPIRES_IN ?? '7').replace('d', ''),
     )
 
     // If the refresh token TTL is not a valid number, throw an error
@@ -196,7 +193,8 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
     return {
       statusCode: 500,
       body: JSON.stringify({
-        message: error instanceof Error ? error.message : 'An unknown error occurred',
+        message:
+          error instanceof Error ? error.message : 'An unknown error occurred',
       }),
     }
   }
