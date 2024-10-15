@@ -1,5 +1,5 @@
-import { createContext, useState, useContext, useEffect } from 'react'
 import nookies from 'nookies'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface AuthContextType {
@@ -10,9 +10,9 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const AuthProvider: React.FC<
+  Readonly<{ children: React.ReactNode }>
+> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const navigate = useNavigate()
 

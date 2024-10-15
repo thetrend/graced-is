@@ -1,11 +1,11 @@
 import bcrypt from 'bcryptjs'
-import { z } from 'zod'
 import { DateTime } from 'luxon'
+import { z } from 'zod'
 
 import type { Handler, HandlerEvent } from '@netlify/functions'
 
-import getPrismaClient from '../utils/prisma'
 import { verifyPostMethod } from '../utils/netlify'
+import getPrismaClient from '../utils/prisma'
 import { generateAccessToken, generateRefreshToken } from '../utils/tokens'
 
 const prisma = getPrismaClient()
@@ -24,7 +24,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
   verifyPostMethod(event)
 
   try {
-    const data = JSON.parse(event.body!)
+    const data = JSON.parse(event.body ?? '{}')
 
     const validatedData = loginSchema.parse(data)
 
@@ -53,7 +53,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
     const accessToken = generateAccessToken(user.id)
     const refreshToken = generateRefreshToken(user.id)
     const refreshTokenTTL =
-      Number(process.env.REFRESH_TOKEN_EXPIRES_IN!.replace('d', '')) || 7
+      Number(process.env.REFRESH_TOKEN_EXPIRES_IN?.replace('d', '')) || 7
 
     const expiresAt = DateTime.now()
       .plus({

@@ -1,8 +1,8 @@
-import { Outlet } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
+import { Outlet } from 'react-router-dom'
+import logo from '../assets/icon.svg'
 import Drawer from './Drawer'
 import Sidebar from './Sidebar'
-import logo from '../assets/icon.svg'
 
 function Layout() {
   return (
