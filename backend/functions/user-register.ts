@@ -52,6 +52,35 @@ export const appendCustomErrors = (
   return new z.ZodError(allErrors)
 }
 
+const checkUserExists = async (
+  input: { email: string; username: string },
+  errorList: { [key: string]: string },
+) => {
+  const { email, username } = input
+
+  // Check if the username or email already exists in the database
+  const existingUser = await prisma.user.findFirst({
+    // Search for a user with the same email or username
+    where: {
+      OR: [{ email }, { username }],
+    },
+    // Only select the id, email and username columns
+    select: {
+      id: true,
+      email: true,
+      username: true,
+    },
+  })
+
+  if (existingUser && existingUser.email === email) {
+    errorList.email = 'Email already exists'
+  }
+  if (existingUser && existingUser.username === username) {
+    errorList.username = 'Username already exists'
+  }
+  return errorList
+}
+
 /**
  * Handle the user registration request.
  *
@@ -66,29 +95,11 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
     // Parse the request body into a JSON object
     const userData = JSON.parse(event.body ?? '{}')
 
-    // Check if the username or email already exists in the database
-    const existingUser = await prisma.user.findFirst({
-      // Search for a user with the same email or username
-      where: {
-        OR: [{ email: userData.email }, { username: userData.username }],
-      },
-      // Only select the id, email and username columns
-      select: {
-        id: true,
-        email: true,
-        username: true,
-      },
-    })
-
     // Initialize an empty object to store custom errors
     const customErrors: { [key: string]: string } = {}
 
     // If a user with the same email or username already exists, add a custom error
-    if (existingUser && existingUser.email === userData.email) {
-      customErrors.email = 'Email already exists'
-    } else if (existingUser && existingUser.username === userData.username) {
-      customErrors.username = 'Username already exists'
-    }
+    checkUserExists(userData, customErrors)
 
     // Parse the user data using the registerSchema
     const parsedUserData = registerSchema.safeParse(userData)
@@ -96,7 +107,7 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
     // If there are any custom errors, append them to the Zod error
     if (Object.keys(customErrors).length > 0) {
       const error = appendCustomErrors(
-        parsedUserData.error || new z.ZodError([]),
+        parsedUserData.error ?? new z.ZodError([]),
         customErrors,
       )
 
