@@ -1,18 +1,18 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
+  type IconDefinition,
   faCircleCheck,
   faCircleInfo,
   faCircleXmark,
   faTriangleExclamation,
-  type IconDefinition,
 } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 interface AlertProps {
   type: 'error' | 'success' | 'warning' | 'info'
   message: string
 }
 
-function Alert({ type = 'info', message }: AlertProps) {
+function Alert({ type = 'info', message }: Readonly<AlertProps>) {
   let icon: IconDefinition
   let alertType: string
   switch (type) {

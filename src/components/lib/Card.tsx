@@ -5,7 +5,7 @@ interface CardProps {
   className?: string
 }
 
-function Card({ children, className }: CardProps) {
+function Card({ children, className }: Readonly<CardProps>) {
   return (
     <div className={`card bg-base-100 w-96 shadow-xl ${className}`}>
       <div className="card-body">{children}</div>

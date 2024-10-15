@@ -23,7 +23,7 @@ function InputField({
   disabled = false,
   required = false,
   error = '',
-}: InputFieldProps) {
+}: Readonly<InputFieldProps>) {
   return (
     <div className="form-control">
       <input
