@@ -4,7 +4,7 @@ import { RichText } from '@graphcms/rich-text-react-renderer'
 import { GetPageQuery } from '../gql'
 import { Page } from '../gql/generated/graphql'
 import NotFound from './NotFound'
-import { RelativeDate } from '../components/Helpers'
+import { RelativeDate } from '../utils/Helpers'
 
 function BlogPage() {
   const { slug } = useParams()

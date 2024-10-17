@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client'
 import { Link } from 'react-router-dom'
-import { GetPagesQuery } from '../gql'
-import { Page } from '../gql/generated/graphql'
+import { GetPagesQuery } from '../../../gql'
+import { Page } from '../../../gql/generated/graphql'
 
 function NavLinks() {
   const { data, loading } = useQuery(GetPagesQuery)
