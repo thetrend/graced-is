@@ -2,41 +2,49 @@ version: 2.1
 
 jobs:
   build:
+    working_directory: ~/repo
     docker:
       - image: cimg/node:20.9.0
     steps:
       - checkout
-
+      
+      # Restore pnpm cache
+      - restore_cache:
+          key: pnpm-cache-{{ checksum "pnpm-lock.yaml" }}
+          
       # Install pnpm globally
       - run:
           name: Install pnpm
           command: npm install -g pnpm
 
-      # Restore pnpm cache
-      - restore_cache:
-          keys:
-            - pnpm-store-{{ checksum "pnpm-lock.yaml" }}
-            - pnpm-store-
-
-      # Install dependencies using pnpm
+      # Install Dependencies using pnpm
       - run:
-          name: Install dependencies
+          name: Install Dependencies
           command: pnpm install
 
-      # Build the project
+      # Cache the pnpm store
+      - save_cache:
+          key: pnpm-cache-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - ~/.pnpm-store  # pnpm uses this directory for cached dependencies
+
+      # Build the React App
       - run:
-          name: Build project
+          name: Build React App
           command: pnpm run build
 
-      # Cache the pnpm store for faster future builds
+      # Cache the build output
       - save_cache:
+          key: app-build-cache-{{ .Branch }}
           paths:
-            - ~/.pnpm-store  # pnpm stores cached modules here
-          key: pnpm-store-{{ checksum "pnpm-lock.yaml" }}
+            - ./build  # Adjust if your build directory is different
 
-      # Install Netlify CLI globally (this ensures it's available)
+      # Deploy to Netlify
       - run:
-          name: Install Netlify CLI
-          command: pnpm add -g netlify-cli
+          name: Deploy to Netlify
+          command: npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_ACCESS_TOKEN --prod --dir=build
 
-      # Deploy
+workflows:
+  build-deploy:
+    jobs:
+      - build  # Removed filters to run for all branches
