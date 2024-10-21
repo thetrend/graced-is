@@ -60,12 +60,22 @@ jobs:
           name: Install Dependencies for Testing
           command: npx pnpm install
 
+      # Create test results directory
+      - run:
+          name: Create Test Results Directory
+          command: mkdir -p test-results  # Create the directory if it doesn't exist
+
       # Run Jest tests
       - run:
           name: Run Jest Tests
           command: npx pnpm test  # Adjust if your test script is named differently
 
-      # Save test results if necessary (optional)
+      # Debugging: List test results directory
+      - run:
+          name: List Test Results
+          command: ls -al test-results  # Verify that results are generated
+
+      # Save test results
       - store_test_results:
           path: test-results  # Adjust based on where your Jest test results are output
 
