@@ -6,7 +6,6 @@ import ReactGA from 'react-ga4'
 
 ReactGA.initialize(import.meta.env.VITE_GA_ID)
 
-// biome-ignore lint/style/noNonNullAssertion: <explanation>
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
