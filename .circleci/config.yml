@@ -31,7 +31,7 @@ jobs:
       # Debugging: List the contents of the build directory
       - run:
           name: List Build Output
-          command: ls -al ./build  # Adjust if your output directory is different
+          command: ls -al ./dist  # Adjust if your output directory is different
 
       # Cache the build output
       - save_cache:
@@ -42,7 +42,7 @@ jobs:
       # Deploy to Netlify
       - run:
           name: Deploy to Netlify
-          command: npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod --dir=build  # Adjust if needed
+          command: npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod --dir=dist  # Adjust if needed
 
 workflows:
   build-deploy:
