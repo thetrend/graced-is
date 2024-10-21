@@ -12,15 +12,10 @@ jobs:
       - restore_cache:
           key: pnpm-cache-{{ checksum "pnpm-lock.yaml" }}
           
-      # Install pnpm globally
-      - run:
-          name: Install pnpm
-          command: npm install -g pnpm
-
-      # Install Dependencies using pnpm
+      # Install Dependencies using pnpm directly via npx
       - run:
           name: Install Dependencies
-          command: pnpm install
+          command: npx pnpm install
 
       # Cache the pnpm store
       - save_cache:
@@ -31,7 +26,7 @@ jobs:
       # Build the React App
       - run:
           name: Build React App
-          command: pnpm run build
+          command: npx pnpm run build
 
       # Cache the build output
       - save_cache:
@@ -47,4 +42,4 @@ jobs:
 workflows:
   build-deploy:
     jobs:
-      - build  # Removed filters to run for all branches
+      - build  # This will run for all branches
