@@ -1,33 +1,73 @@
 version: 2.1
 
+executors:
+  node:
+    docker:
+      - image: cimg/node:20.9.0  # Adjust Node.js version if needed
+    working_directory: ~/repo
+
 jobs:
   build:
-    docker:
-      - image: cimg/node:20.9.0
+    executor: node
     steps:
       - checkout
+
+      # Install pnpm globally
+      - run:
+          name: Install pnpm
+          command: npm install -g pnpm
+
+      # Cache pnpm store
       - restore_cache:
           keys:
-            - pnpm-store-{{ checksum "pnpm-lock.yaml" }}
+            - v1-dependencies-{{ checksum "pnpm-lock.yaml" }}
+            - v1-dependencies-
+
+      # Install dependencies with pnpm
       - run:
-          name: Install dependencies
+          name: Install Dependencies
           command: pnpm install
-      - run:
-          name: Build project
-          command: pnpm run build
+
       - save_cache:
           paths:
-            - node_modules
-            - .pnpm-store
-          key: pnpm-store-{{ checksum "pnpm-lock.yaml" }}
+            - ~/.pnpm-store
+          key: v1-dependencies-{{ checksum "pnpm-lock.yaml" }}
+
+      # Build project using Vite
+      - run:
+          name: Build Project with Vite
+          command: pnpm run build
+
+      # Persist build artifacts (optional)
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist  # This is Vite's default output directory, adjust if needed
+
+  deploy:
+    executor: node
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo
+
+      # Install Netlify CLI
+      - run:
+          name: Install Netlify CLI
+          command: pnpm add -g netlify-cli
+
+      # Deploy to Netlify
       - run:
           name: Deploy to Netlify
-          command: npx netlify-cli deploy --prod --dir=dist
-    environment:
-      NETLIFY_AUTH_TOKEN: $NETLIFY_AUTH_TOKEN
-      NETLIFY_SITE_ID: $NETLIFY_SITE_ID
+          command: |
+            netlify deploy --prod --dir=dist --auth=$NETLIFY_AUTH_TOKEN
+          environment:
+            NETLIFY_SITE_ID: $NETLIFY_SITE_ID  # Ensure this is set in CircleCI env vars
 
 workflows:
-  build-and-deploy:
+  build_and_deploy:
     jobs:
       - build
+      - deploy:
+          requires:
+            - build
