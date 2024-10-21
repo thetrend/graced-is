@@ -19,7 +19,7 @@ export const handler: Handler = async (event: HandlerEvent) => {
 
   try {
     const cookies = parseCookies({
-      req: { headers: { cookie: event.headers.cookie || '' } },
+      req: { headers: { cookie: event.headers.cookie ?? '' } },
     })
 
     // const data = JSON.parse(event.body!)

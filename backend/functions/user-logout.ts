@@ -5,12 +5,11 @@ import { verifyPostMethod } from '../utils/netlify'
 
 const prisma = getPrismaClient()
 
-// eslint-disable-next-line import/prefer-default-export
 export const handler: Handler = async (event: HandlerEvent) => {
   verifyPostMethod(event)
 
   try {
-    const cookies = event.headers.cookie || ''
+    const cookies = event.headers.cookie ?? ''
     const refreshToken = cookies
       .split('; ')
       .find(row => row.startsWith('refreshToken='))
