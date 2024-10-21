@@ -1,31 +1,34 @@
-import type { Handler, HandlerEvent } from '@netlify/functions'
+import type { HandlerEvent, HandlerResponse } from '@netlify/functions';
+import getPrismaClient from '../utils/prisma';
+import { createErrorResponse } from '../utils/netlify';
 
-import getPrismaClient from '../utils/prisma'
-import { verifyPostMethod } from '../utils/netlify'
+const prisma = getPrismaClient();
 
-const prisma = getPrismaClient()
-
-export const handler: Handler = async (event: HandlerEvent) => {
-  verifyPostMethod(event)
+export const handler = async (event: HandlerEvent): Promise<HandlerResponse> => {
+  // Verify that the request method is POST
+  if (event.httpMethod !== 'POST') {
+    return createErrorResponse(405, 'Method Not Allowed');
+  }
 
   try {
-    const cookies = event.headers.cookie ?? ''
+    // Extract the refresh token from cookies
+    const cookies = event.headers.cookie ?? '';
     const refreshToken = cookies
       .split('; ')
       .find(row => row.startsWith('refreshToken='))
-      ?.split('=')[1]
+      ?.split('=')[1];
 
+    // Check if refresh token is provided
     if (!refreshToken) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Refresh token is required' }),
-      }
+      return createErrorResponse(400, 'Refresh token is required');
     }
 
+    // Delete the refresh token from the database
     await prisma.refreshToken.deleteMany({
       where: { token: refreshToken },
-    })
+    });
 
+    // Return success response
     return {
       statusCode: 200,
       headers: {
@@ -35,13 +38,10 @@ export const handler: Handler = async (event: HandlerEvent) => {
       body: JSON.stringify({
         message: 'Logged out successfully',
       }),
-    }
+    };
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : 'An unknown error occurred'
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: errorMessage }),
-    }
+      error instanceof Error ? error.message : 'An unknown error occurred';
+    return createErrorResponse(500, errorMessage);
   }
-}
+};

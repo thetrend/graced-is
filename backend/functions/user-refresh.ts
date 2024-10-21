@@ -1,51 +1,52 @@
-import type { Handler, HandlerEvent } from '@netlify/functions'
+import { HandlerEvent, HandlerResponse } from '@netlify/functions';
+import getPrismaClient from '../utils/prisma';
+import { createErrorResponse } from '../utils/netlify';
+import { generateAccessToken, verifyRefreshToken } from '../utils/tokens';
 
-import getPrismaClient from '../utils/prisma'
-import { verifyPostMethod } from '../utils/netlify'
-import { generateAccessToken, verifyRefreshToken } from '../utils/tokens'
+const prisma = getPrismaClient();
 
-const prisma = getPrismaClient()
+export const handler = async (
+  event: HandlerEvent,
+): Promise<HandlerResponse> => {
+  // Check for the HTTP method
+  if (event.httpMethod !== 'POST') {
+    return createErrorResponse(405, 'Method Not Allowed');
+  }
 
-export const handler: Handler = async (event: HandlerEvent) => {
-  verifyPostMethod(event)
+  // Extract cookies
+  const cookie = event.headers.cookie ?? '';
+  const refreshToken = cookie.split('refreshToken=')[1]?.split(';')[0]; // Split to get only the token part
+
+  // Validate the refresh token presence
+  if (!refreshToken) {
+    return createErrorResponse(400, 'Refresh token is required');
+  }
 
   try {
-    const cookies = event.headers.cookie ?? ''
-    const refreshToken = cookies
-      .split('; ')
-      .find((row) => row.startsWith('refreshToken='))
-      ?.split('=')[1]
-
-    if (!refreshToken) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Refresh token is required' }),
-      }
+    // Verify the refresh token
+    const verifiedToken = verifyRefreshToken(refreshToken);
+    if (!verifiedToken) {
+      return createErrorResponse(401, 'Invalid refresh token');
     }
 
-    const decodedToken = verifyRefreshToken(refreshToken)
-
-    const existingToken = await prisma.refreshToken.findUnique({
+    // Check the token in the database
+    const tokenRecord = await prisma.refreshToken.findUnique({
       where: { token: refreshToken },
-    })
+    });
 
-    if (!existingToken || decodedToken?.userId !== existingToken.userId) {
-      return {
-        statusCode: 401,
-        body: JSON.stringify({ error: 'Invalid refresh token' }),
-      }
+    // If the token is not found, return 401
+    if (!tokenRecord) {
+      return createErrorResponse(401, 'Invalid refresh token');
     }
 
-    const newAccessToken = generateAccessToken(existingToken.userId)
-
+    // Generate a new access token
+    const newAccessToken = generateAccessToken(verifiedToken.userId);
     return {
       statusCode: 200,
       body: JSON.stringify({ accessToken: newAccessToken }),
-    }
+    };
   } catch (error) {
-    return {
-      statusCode: 401,
-      body: JSON.stringify({ error: 'Invalid refresh token' }),
-    }
+    // Return 500 for any other errors
+    return createErrorResponse(500, 'An internal error occurred');
   }
-}
+};

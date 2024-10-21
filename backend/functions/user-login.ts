@@ -1,97 +1,83 @@
-import bcrypt from 'bcryptjs'
-import { DateTime } from 'luxon'
-import { z } from 'zod'
+import * as bcrypt from 'bcryptjs';
+import { DateTime } from 'luxon';
+import type { HandlerEvent, HandlerResponse } from '@netlify/functions';
+import getPrismaClient from '../utils/prisma';
+import { loginSchema } from '../schemas/userSchemas';
+import { generateAccessToken, generateRefreshToken } from '../utils/tokens';
+import { createErrorResponse } from '../utils/netlify';
 
-import type { Handler, HandlerEvent } from '@netlify/functions'
+const prisma = getPrismaClient();
 
-import { verifyPostMethod } from '../utils/netlify'
-import getPrismaClient from '../utils/prisma'
-import { generateAccessToken, generateRefreshToken } from '../utils/tokens'
+export const handler = async (event: HandlerEvent): Promise<HandlerResponse> => {
+  // Check for the correct HTTP method
+  if (event.httpMethod !== 'POST') {
+    return createErrorResponse(405, 'Method Not Allowed');
+  }
 
-const prisma = getPrismaClient()
+  // Check for request body
+  if (!event.body) {
+    return createErrorResponse(400, 'Bad Request: Request body is required.');
+  }
 
-const loginSchema = z.object({
-  email: z
-    .string({
-      required_error: 'Email address is required',
-    })
-    .email('Invalid email address'),
-  password: z.string({ required_error: 'Password is required' }),
-})
-
-// eslint-disable-next-line import/prefer-default-export
-export const handler: Handler = async (event: HandlerEvent) => {
-  verifyPostMethod(event)
+  let userData;
+  try {
+    userData = JSON.parse(event.body);
+  } catch (parseError) {
+    return createErrorResponse(400, 'Bad Request: Invalid JSON format.');
+  }
 
   try {
-    const data = JSON.parse(event.body ?? '{}')
+    // Validate user data
+    const validatedData = loginSchema.safeParse(userData);
 
-    const validatedData = loginSchema.parse(data)
-
-    const { email, password } = validatedData
-
-    const user = await prisma.user.findFirst({
-      where: { email },
-    })
-
-    if (!user) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ message: 'Invalid credentials' }),
-      }
+    if (!validatedData.success) {
+      return createErrorResponse(400, JSON.stringify({ errors: validatedData.error.errors }));
     }
 
-    const passwordMatches = await bcrypt.compare(password, user.password)
+    const { email, password } = validatedData.data;
+
+    // Check if user exists
+    const user = await prisma.user.findFirst({ where: { email } });
+
+    if (!user) {
+      return createErrorResponse(400, 'Invalid credentials');
+    }
+
+    // Compare password
+    const passwordMatches = await bcrypt.compare(password, user.password);
     if (!passwordMatches) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ message: 'Invalid credentials' }),
-      }
+      return createErrorResponse(400, 'Invalid credentials');
     }
 
     // Generate access and refresh tokens
-    const accessToken = generateAccessToken(user.id)
-    const refreshToken = generateRefreshToken(user.id)
-    const refreshTokenTTL =
-      Number(process.env.REFRESH_TOKEN_EXPIRES_IN?.replace('d', '')) || 7
+    const accessToken = generateAccessToken(user.id);
+    const refreshToken = generateRefreshToken(user.id);
+    const refreshTokenTTL = Number(process.env.REFRESH_TOKEN_EXPIRES_IN?.replace('d', '')) || 7;
 
-    const expiresAt = DateTime.now()
-      .plus({
-        days: refreshTokenTTL,
-      })
-      .toJSDate()
+    const expiresAt = DateTime.now().plus({ days: refreshTokenTTL }).toJSDate();
 
-    // Save refresh token in the database if needed
+    // Save refresh token in the database
     await prisma.refreshToken.create({
       data: {
         userId: user.id,
         token: refreshToken,
         expiresAt,
       },
-    })
+    });
 
+    // Return success response
     return {
       statusCode: 200,
       headers: {
-        'Set-Cookie': `refreshToken=${refreshToken}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${60 * 60 * 24 * refreshTokenTTL}`, // 7 days
+        'Set-Cookie': `refreshToken=${refreshToken}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${60 * 60 * 24 * refreshTokenTTL}`,
       },
       body: JSON.stringify({
         message: 'Login successful',
         accessToken,
       }),
-    }
+    };
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'An unknown error occurred'
-    if (error instanceof z.ZodError) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ errors: error.errors }),
-      }
-    }
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: errorMessage }),
-    }
+    console.error("Error during login:", error);
+    return createErrorResponse(500, error instanceof Error ? error.message : 'An unknown error occurred');
   }
-}
+};

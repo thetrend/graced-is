@@ -1,5 +1,5 @@
 // Import necessary modules and functions for testing
-import { handler } from '../../functions/user-register'; // The handler function for user registration
+import { handler } from '../../functions/user-login'; // The handler function for user login
 import getPrismaClient from '../../utils/prisma'; // Prisma client for database interactions
 import * as bcrypt from 'bcryptjs'; // Library for password hashing
 import { generateAccessToken, generateRefreshToken } from '../../utils/tokens'; // Token generation utilities
@@ -9,7 +9,6 @@ jest.mock('../../utils/prisma', () => {
   const mockedPrisma = {
     user: {
       findFirst: jest.fn(), // Mock function to find an existing user
-      create: jest.fn(), // Mock function to create a new user
     },
     refreshToken: {
       create: jest.fn(), // Mock function to create a new refresh token
@@ -23,7 +22,7 @@ jest.mock('../../utils/prisma', () => {
 
 // Mock the bcrypt library to control password hashing behavior
 jest.mock('bcryptjs', () => ({
-  hash: jest.fn(), // Mock the hash function
+  compare: jest.fn(), // Mock the compare function
 }));
 
 // Mock token generation functions
@@ -35,8 +34,8 @@ jest.mock('../../utils/tokens', () => ({
 // Get the mocked Prisma client for use in tests
 const prisma = getPrismaClient();
 
-// Start the test suite for the register handler
-describe('register handler', () => {
+// Start the test suite for the login handler
+describe('login handler', () => {
 
   // Helper function to create mock event objects
   const mockEvent = (body: any) => ({
@@ -82,77 +81,52 @@ describe('register handler', () => {
     expect(response.body).toBe(JSON.stringify({ message: 'Bad Request: Invalid JSON format.' }));
   });
 
-  // Test case: Return 400 status if user already exists
-  test('should return 400 if user exists', async () => {
-    const existingUser = { email: 'test@example.com', username: 'testuser' }; // Mock existing user
-    prisma.user.findFirst.mockResolvedValue(existingUser); // Simulate user already exists in DB
-
+  // Test case: Return 400 status if user does not exist
+  test('should return 400 if user does not exist', async () => {
     const userData = {
-      email: 'test@example.com',
-      username: 'newuser',
+      email: 'nonexistent@example.com',
       password: 'password123',
-      passwordConfirm: 'password123', // Ensure this matches
-      display: 'Test User',
     };
+
+    prisma.user.findFirst.mockResolvedValue(null); // Mock to return null for non-existing user
+
     const event = mockEvent(userData); // Create mock event
     const response = await handler(event as any); // Call the handler
 
     // Assert that the response has the correct status and error message
     expect(response.statusCode).toBe(400);
-    expect(JSON.parse(response.body as string).errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ message: 'Email already exists' }),
-      ])
-    );
+    expect(response.body).toBe(JSON.stringify({ message: 'Invalid credentials' }));
   });
 
-  // Test case: Return 400 status for Zod validation errors
-  test('should return 400 for Zod validation errors', async () => {
+  // Test case: Return 400 status for incorrect password
+  test('should return 400 for incorrect password', async () => {
     const userData = {
-      email: 'invalid-email', // Invalid email format
-      password: '123', // Too short password
-      passwordConfirm: 'wrong-password',  // Intentionally wrong for testing
-      username: '', // Missing username
-      display: 'Test User',
+      email: 'test@example.com',
+      password: 'wrongpassword',
     };
+
+    const existingUser = { id: '1', email: 'test@example.com', password: 'hashedPassword' };
+    prisma.user.findFirst.mockResolvedValue(existingUser); // Mock to return an existing user
+    (bcrypt.compare as jest.Mock).mockResolvedValue(false); // Mock password comparison to fail
 
     const event = mockEvent(userData); // Create mock event
     const response = await handler(event as any); // Call the handler
 
-    expect(response.statusCode).toBe(400); // Assert for correct status
-
-    // Parse the response body to check for errors
-    const parsedBody = JSON.parse(response.body ?? '{}');
-    const errors = parsedBody.errors || [];
-
-    // Assert that the number of errors is correct
-    expect(errors).toHaveLength(5);
-    expect(errors).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ message: 'Invalid email address' }),
-        expect.objectContaining({ message: 'Password must be at least 8 characters' }),
-        expect.objectContaining({ message: "Passwords don't match" }),
-        expect.objectContaining({ message: 'Username must contain at least 1 character' }),
-        expect.objectContaining({ message: 'Username can only contain letters, numbers, dashes, and underscores' }),
-      ])
-    );
+    // Assert that the response has the correct status and error message
+    expect(response.statusCode).toBe(400);
+    expect(response.body).toBe(JSON.stringify({ message: 'Invalid credentials' }));
   });
 
-  // Test case: Successfully register user
-  test('should register user successfully', async () => {
+  // Test case: Successfully log in user
+  test('should log in user successfully', async () => {
     const userData = {
       email: 'test@example.com',
-      username: 'newuser',
       password: 'password123',
-      passwordConfirm: 'password123', // Ensure this matches
-      display: 'Test User',
     };
 
-    // Mock database responses
-    prisma.user.findFirst.mockResolvedValue(null); // Mock to return null for existing user
-    (bcrypt.hash as jest.Mock).mockResolvedValue('hashedPassword'); // Mock password hashing
-    prisma.user.create.mockResolvedValue({ id: '1', ...userData }); // Mock user creation
-    prisma.refreshToken.create.mockResolvedValue({}); // Mock refresh token creation
+    const existingUser = { id: '1', email: 'test@example.com', password: 'hashedPassword' };
+    prisma.user.findFirst.mockResolvedValue(existingUser); // Mock to return an existing user
+    (bcrypt.compare as jest.Mock).mockResolvedValue(true); // Mock password comparison to succeed
 
     // Mock generated tokens
     const accessToken = 'mockAccessToken';
@@ -163,16 +137,14 @@ describe('register handler', () => {
     const event = mockEvent(userData); // Create mock event
     const response = await handler(event as any); // Call the handler
 
-    expect(response.statusCode).toBe(201); // Assert for successful registration
+    expect(response.statusCode).toBe(200); // Assert for successful login
 
     // Safely parse response body
     const responseBody = response.body ? JSON.parse(response.body) : {};
 
     // Assert that the response contains the expected data
-    expect(responseBody.message).toBe('User registered');
+    expect(responseBody.message).toBe('Login successful');
     expect(responseBody.accessToken).toBe(accessToken);
-    expect(responseBody.user).toEqual(
-      expect.objectContaining({ email: userData.email, username: userData.username })
-    );
+    expect(response.headers!['Set-Cookie']).toMatch(/refreshToken=mockRefreshToken/); // Check Set-Cookie header
   });
 });

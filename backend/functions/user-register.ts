@@ -1,15 +1,12 @@
 import * as bcrypt from 'bcryptjs';
 import * as _ from 'lodash';
-
 import { DateTime } from 'luxon';
 import { z } from 'zod';
-
 import type { HandlerEvent, HandlerResponse } from '@netlify/functions';
-
 import getPrismaClient from '../utils/prisma';
-
-import { defaultTZ, registerSchema } from '../schemas/registerSchema';
+import { defaultTZ, registerSchema } from '../schemas/userSchemas';
 import { generateAccessToken, generateRefreshToken } from '../utils/tokens';
+import { createErrorResponse } from '../utils/netlify';
 
 const prisma = getPrismaClient();
 
@@ -24,39 +21,38 @@ export const appendCustomErrors = (zodError: z.ZodError, customErrorMessages: Re
 
 const checkUserExists = async (input: { email: string; username: string }, errorList: { [key: string]: string }) => {
   const { email, username } = input;
-  const existingUser = await prisma.user.findFirst({
-    where: { OR: [{ email }, { username }] },
-    select: { id: true, email: true, username: true },
-  });
+  try {
+    const existingUser = await prisma.user.findFirst({
+      where: { OR: [{ email }, { username }] },
+      select: { id: true, email: true, username: true },
+    });
 
-  if (existingUser?.email === email) errorList.email = 'Email already exists';
-  if (existingUser?.username === username) errorList.username = 'Username already exists';
+    if (existingUser?.email === email) errorList.email = 'Email already exists';
+    if (existingUser?.username === username) errorList.username = 'Username already exists';
 
-  return errorList;
+    return errorList;
+  } catch (error) {
+    console.error("Error checking user existence:", error);
+    throw new Error('Database error occurred while checking user existence.');
+  }
 };
 
 export const handler = async (event: HandlerEvent): Promise<HandlerResponse> => {
+  // Check for the correct HTTP method
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: 'Method Not Allowed',
-    };
+    return createErrorResponse(405, 'Method Not Allowed');
   }
+
+  // Check for request body
   if (!event.body) {
-    return {
-      statusCode: 400,
-      body: 'Bad Request: Request body is required.',
-    };
+    return createErrorResponse(400, 'Bad Request: Request body is required.');
   }
 
   let userData;
   try {
     userData = JSON.parse(event.body);
   } catch (parseError) {
-    return {
-      statusCode: 400,
-      body: 'Bad Request: Invalid JSON format.',
-    };
+    return createErrorResponse(400, 'Bad Request: Invalid JSON format.');
   }
 
   try {
@@ -116,9 +112,7 @@ export const handler = async (event: HandlerEvent): Promise<HandlerResponse> => 
     };
 
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return { statusCode: 400, body: JSON.stringify({ errors: error.errors }) };
-    }
-    return { statusCode: 500, body: JSON.stringify({ message: error instanceof Error ? error.message : 'An unknown error occurred' }) };
+    console.error("Error during user registration:", error);
+    return createErrorResponse(500, error instanceof Error ? error.message : 'An unknown error occurred');
   }
 };
