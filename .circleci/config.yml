@@ -44,7 +44,35 @@ jobs:
           name: Deploy to Netlify
           command: npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod --dir=dist  # Adjust if needed
 
+  test:
+    working_directory: ~/repo
+    docker:
+      - image: cimg/node:20.9.0
+    steps:
+      - checkout
+      
+      # Restore pnpm cache for test job
+      - restore_cache:
+          key: pnpm-cache-{{ checksum "pnpm-lock.yaml" }}
+
+      # Install Dependencies using pnpm directly via npx
+      - run:
+          name: Install Dependencies for Testing
+          command: npx pnpm install
+
+      # Run Jest tests
+      - run:
+          name: Run Jest Tests
+          command: npx pnpm test  # Adjust if your test script is named differently
+
+      # Save test results if necessary (optional)
+      - store_test_results:
+          path: test-results  # Adjust based on where your Jest test results are output
+
 workflows:
-  build-deploy:
+  build-test-deploy:
     jobs:
-      - build  # This will run for all branches
+      - test  # Run tests first
+      - build:  # Run build job after tests
+          requires:
+            - test  # Ensure the build job runs only after tests pass
