@@ -9,13 +9,11 @@ import type { Handler, HandlerEvent } from '@netlify/functions'
 //   verifyRefreshToken,
 //   generateAccessToken,
 // } from '../utils/tokens'
-import { verifyPostMethod } from '../utils/netlify'
 
 // const prisma = getPrismaClient()
 
 // eslint-disable-next-line import/prefer-default-export
 export const handler: Handler = async (event: HandlerEvent) => {
-  verifyPostMethod(event)
 
   try {
     const cookies = parseCookies({
