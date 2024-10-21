@@ -6,28 +6,37 @@ jobs:
       - image: cimg/node:20.9.0
     steps:
       - checkout
+
+      # Install pnpm globally
+      - run:
+          name: Install pnpm
+          command: npm install -g pnpm
+
+      # Restore pnpm cache
       - restore_cache:
           keys:
             - pnpm-store-{{ checksum "pnpm-lock.yaml" }}
+            - pnpm-store-
+
+      # Install dependencies using pnpm
       - run:
           name: Install dependencies
           command: pnpm install
+
+      # Build the project
       - run:
           name: Build project
           command: pnpm run build
+
+      # Cache the pnpm store for faster future builds
       - save_cache:
           paths:
-            - node_modules
-            - .pnpm-store
+            - ~/.pnpm-store  # pnpm stores cached modules here
           key: pnpm-store-{{ checksum "pnpm-lock.yaml" }}
-      - run:
-          name: Deploy to Netlify
-          command: npx netlify-cli deploy --prod --dir=dist
-    environment:
-      NETLIFY_AUTH_TOKEN: $NETLIFY_AUTH_TOKEN
-      NETLIFY_SITE_ID: $NETLIFY_SITE_ID
 
-workflows:
-  build-and-deploy:
-    jobs:
-      - build
+      # Install Netlify CLI globally (this ensures it's available)
+      - run:
+          name: Install Netlify CLI
+          command: pnpm add -g netlify-cli
+
+      # Deploy
