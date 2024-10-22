@@ -1,32 +1,34 @@
-import type { HandlerEvent, HandlerResponse } from '@netlify/functions';
-import getPrismaClient from '../utils/prisma';
-import { createErrorResponse } from '../utils/netlify';
+import type { HandlerEvent, HandlerResponse } from '@netlify/functions'
+import { createErrorResponse } from '../utils/netlify'
+import getPrismaClient from '../utils/prisma'
 
-const prisma = getPrismaClient();
+const prisma = getPrismaClient()
 
-export const handler = async (event: HandlerEvent): Promise<HandlerResponse> => {
+export const handler = async (
+  event: Partial<HandlerEvent>,
+): Promise<HandlerResponse> => {
   // Verify that the request method is POST
   if (event.httpMethod !== 'POST') {
-    return createErrorResponse(405, 'Method Not Allowed');
+    return createErrorResponse(405, 'Method Not Allowed')
   }
 
   try {
     // Extract the refresh token from cookies
-    const cookies = event.headers.cookie ?? '';
+    const cookies = event.headers?.cookie ?? ''
     const refreshToken = cookies
       .split('; ')
       .find(row => row.startsWith('refreshToken='))
-      ?.split('=')[1];
+      ?.split('=')[1]
 
     // Check if refresh token is provided
     if (!refreshToken) {
-      return createErrorResponse(400, 'Refresh token is required');
+      return createErrorResponse(400, 'Refresh token is required')
     }
 
     // Delete the refresh token from the database
     await prisma.refreshToken.deleteMany({
       where: { token: refreshToken },
-    });
+    })
 
     // Return success response
     return {
@@ -38,10 +40,10 @@ export const handler = async (event: HandlerEvent): Promise<HandlerResponse> => 
       body: JSON.stringify({
         message: 'Logged out successfully',
       }),
-    };
+    }
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : 'An unknown error occurred';
-    return createErrorResponse(500, errorMessage);
+      error instanceof Error ? error.message : 'An unknown error occurred'
+    return createErrorResponse(500, errorMessage)
   }
-};
+}

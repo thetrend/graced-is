@@ -1,6 +1,9 @@
-import { HandlerResponse } from '@netlify/functions'
+import type { HandlerResponse } from '@netlify/functions'
 
-export const createErrorResponse = (statusCode: number, message: string): HandlerResponse => ({
+export const createErrorResponse = (
+  statusCode: number,
+  message: string,
+): HandlerResponse => ({
   statusCode,
   body: JSON.stringify({ message }),
-});
+})

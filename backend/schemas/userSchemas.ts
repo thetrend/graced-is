@@ -29,7 +29,7 @@ export const registerSchema = z
       .max(20, 'Username can only be up to 20 characters')
       .regex(
         /^[A-Za-z0-9_-]+$/,
-        'Username can only contain letters, numbers, dashes, and underscores'
+        'Username can only contain letters, numbers, dashes, and underscores',
       ),
     display: z
       .string({
@@ -39,7 +39,7 @@ export const registerSchema = z
       .max(20, 'Display name can only be up to 20 characters'),
     timezone: z.string().default(defaultTZ),
   })
-  .refine((data) => data.password === data.passwordConfirm, {
+  .refine(data => data.password === data.passwordConfirm, {
     message: "Passwords don't match",
     path: ['passwordConfirm'],
   })
@@ -51,4 +51,4 @@ export const loginSchema = z.object({
     })
     .email('Invalid email address'),
   password: z.string({ required_error: 'Password is required' }),
-});
+})

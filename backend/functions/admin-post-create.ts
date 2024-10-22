@@ -1,5 +1,5 @@
-import { z } from 'zod'
 import { parseCookies } from 'nookies'
+import { z } from 'zod'
 
 import type { Handler, HandlerEvent } from '@netlify/functions'
 
@@ -14,7 +14,6 @@ import type { Handler, HandlerEvent } from '@netlify/functions'
 
 // eslint-disable-next-line import/prefer-default-export
 export const handler: Handler = async (event: HandlerEvent) => {
-
   try {
     const cookies = parseCookies({
       req: { headers: { cookie: event.headers.cookie ?? '' } },

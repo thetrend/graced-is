@@ -1,9 +1,6 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
-const router = createBrowserRouter([
-  {
-  },
-])
+const router = createBrowserRouter([{}])
 
 function App() {
   return <RouterProvider router={router} fallbackElement={<>Loading...</>} />
