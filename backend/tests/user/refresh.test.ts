@@ -32,19 +32,12 @@ jest.mock('../../utils/netlify', () => ({
 
 const prisma = getPrismaClient()
 
-const mockEvent = (cookie: string): HandlerEvent => ({
+const mockEvent = (cookie: string): Partial<HandlerEvent> => ({
   httpMethod: 'POST',
   headers: {
     cookie,
   },
   body: null,
-  isBase64Encoded: false,
-  path: '/user-refresh',
-  queryStringParameters: null,
-  multiValueQueryStringParameters: null,
-  multiValueHeaders: {},
-  rawUrl: '',
-  rawQuery: '',
 })
 
 afterEach(() => {
