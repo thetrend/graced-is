@@ -1,0 +1,10 @@
+# Allow all
+User-agent: *
+Disallow:
+
+# Block access to certain directories (if they exist)
+Disallow: /admin/
+Disallow: /api/
+
+# Allow crawling of the sitemap (if you have one)
+# Sitemap: https://yourdomain.com/sitemap.xml

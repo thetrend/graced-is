@@ -1,0 +1,88 @@
+version: 2.1
+
+jobs:
+  build:
+    working_directory: ~/repo
+    docker:
+      - image: cimg/node:20.9.0
+    steps:
+      - checkout
+      
+      # Restore pnpm cache
+      - restore_cache:
+          key: pnpm-cache-{{ checksum "pnpm-lock.yaml" }}
+          
+      # Install Dependencies using pnpm directly via npx
+      - run:
+          name: Install Dependencies
+          command: npx pnpm install
+
+      # Cache the pnpm store
+      - save_cache:
+          key: pnpm-cache-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - ~/.pnpm-store  # pnpm uses this directory for cached dependencies
+
+      # Build the React App
+      - run:
+          name: Build React App
+          command: npx pnpm run build
+
+      # Debugging: List the contents of the build directory
+      - run:
+          name: List Build Output
+          command: ls -al ./dist  # Adjust if your output directory is different
+
+      # Cache the build output
+      - save_cache:
+          key: app-build-cache-{{ .Branch }}
+          paths:
+            - ./build  # Adjust if your build directory is different
+
+      # Deploy to Netlify
+      - run:
+          name: Deploy to Netlify
+          command: npx netlify-cli deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod --dir=dist  # Adjust if needed
+
+  test:
+    working_directory: ~/repo
+    docker:
+      - image: cimg/node:20.9.0
+    steps:
+      - checkout
+      
+      # Restore pnpm cache for test job
+      - restore_cache:
+          key: pnpm-cache-{{ checksum "pnpm-lock.yaml" }}
+
+      # Install Dependencies using pnpm directly via npx
+      - run:
+          name: Install Dependencies for Testing
+          command: npx pnpm install
+
+      # Create test results directory
+      - run:
+          name: Create Test Results Directory
+          command: mkdir -p test-results  # Create the directory if it doesn't exist
+
+      # Run Jest tests
+      - run:
+          name: Run Jest Tests
+          command: npx pnpm test  # Adjust if your test script is named differently
+
+      # Debugging: List test results directory
+      - run:
+          name: List Test Results
+          command: ls -al test-results  # Verify that results are generated
+
+      # Save test results
+      - store_test_results:
+          path: test-results  # Adjust based on where your Jest test results are output
+
+workflows:
+  build-test-deploy:
+    jobs:
+      - test  # Run tests first
+      - build:  # Run build job after tests
+          requires:
+            - test  # Ensure the build job runs only after tests pass
