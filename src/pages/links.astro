@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const links = [
+  {
+    name: "infused@home",
+    url: "https://discord.gg/QSuSUKgqxj",
+    description: "a 21+ discord server about cooking with cannabis",
+  },
+];
+---
+
+<BaseLayout title="Links" description="A collection of useful links.">
+  <main class="p-6">
+    <h1 class="my-10 text-2xl lowercase">Links</h1>
+    <ul class="space-y-4">
+      {
+        links.map((link, index) => {
+          return (
+            <li
+              class={
+                index === 0
+                  ? "flex gap-8 border-y border-gray-300 px-4"
+                  : "flex gap-8 border-b border-gray-300 px-4"
+              }
+            >
+              <a
+                href={link.url}
+                class="group flex w-full gap-3 hover:bg-fuchsia-50 active:bg-fuchsia-100"
+              >
+                <span class="group-hover:underline">{link.name}</span>
+                <span class="italic text-zinc-500 dark:text-zinc-50">
+                  {link.description}
+                </span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </main>
+</BaseLayout>

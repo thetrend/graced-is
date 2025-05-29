@@ -1,0 +1,82 @@
+---
+import PROFILE_PHOTO from "../assets/profile.jpeg";
+---
+
+<div
+  class="mx-auto mt-6 flex w-full items-center justify-between border-b border-gray-300 px-6 pb-6 lg:container"
+>
+  <div class="flex w-2/3 flex-col gap-8">
+    <h1 class="font-sans text-2xl hover:text-fuchsia-600">
+      <a href="/">graced.is</a>
+    </h1>
+    <p class="text-balance text-lg">
+      This is the personal blog of grace de la Mora.
+    </p>
+    <nav class="hidden space-x-8 font-sans md:flex">
+      <a href="/posts" class="font-bold hover:text-fuchsia-600">posts</a>
+      <a href="/categories" class="font-bold hover:text-fuchsia-600"
+        >categories</a
+      >
+      <a href="/contact" class="font-bold hover:text-fuchsia-600">contact</a>
+      <a href="/links" class="font-bold hover:text-fuchsia-600">links</a>
+    </nav>
+    <button id="openMenu" class="text-left font-sans md:hidden"
+      >&#9776; open menu</button
+    >
+  </div>
+  <img src={PROFILE_PHOTO.src} class="h-28 w-28 rounded-full object-cover" />
+</div>
+
+<!-- Mobile Menu Overlay -->
+<div
+  id="mobileMenu"
+  class="pointer-events-none fixed inset-0 z-50 translate-y-4 flex-col items-center justify-center bg-white bg-opacity-95 opacity-0 transition-all duration-300 ease-in-out"
+>
+  <button id="closeMenu" class="absolute right-6 top-6 text-3xl font-bold"
+    >&times;</button
+  >
+  <nav class="mt-20 flex flex-col items-center gap-8 font-sans text-2xl">
+    <a href="/posts" class="font-bold hover:text-fuchsia-600">posts</a>
+    <a href="/categories" class="font-bold hover:text-fuchsia-600">categories</a
+    >
+    <a href="/contact" class="font-bold hover:text-fuchsia-600">contact</a>
+    <a href="/links" class="font-bold hover:text-fuchsia-600">links</a>
+  </nav>
+</div>
+<script>
+  const mobileMenu = document.getElementById("mobileMenu");
+  const openMenu = document.getElementById("openMenu");
+  const closeMenu = document.getElementById("closeMenu");
+
+  if (openMenu && mobileMenu) {
+    openMenu.addEventListener("click", () => {
+      mobileMenu.classList.remove(
+        "pointer-events-none",
+        "opacity-0",
+        "translate-y-4",
+      );
+      mobileMenu.classList.add(
+        "pointer-events-auto",
+        "opacity-100",
+        "translate-y-0",
+        "flex",
+      );
+    });
+  }
+
+  if (closeMenu && mobileMenu) {
+    closeMenu.addEventListener("click", () => {
+      mobileMenu.classList.add(
+        "pointer-events-none",
+        "opacity-0",
+        "translate-y-4",
+      );
+      mobileMenu.classList.remove(
+        "pointer-events-auto",
+        "opacity-100",
+        "translate-y-0",
+        "flex",
+      );
+    });
+  }
+</script>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>graced.is</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="overscroll-none min-h-screen flex flex-col text-gray-800 font-serif">
+  <!-- Mobile Menu Overlay -->
+  <div id="mobileMenu" class="fixed inset-0 bg-white bg-opacity-95 z-50 flex-col items-center justify-center
+         pointer-events-none opacity-0 translate-y-4 transition-all duration-300 ease-in-out">
+    <button id="closeMenu" class="absolute top-6 right-6 text-3xl font-bold">&times;</button>
+    <nav class="flex flex-col gap-8 text-2xl font-sans items-center mt-20">
+      <a href="#" class="hover:text-fuchsia-600 font-bold">posts</a>
+      <a href="#" class="hover:text-fuchsia-600 font-bold">categories</a>
+      <a href="#" class="hover:text-fuchsia-600 font-bold">email</a>
+      <a href="#" class="hover:text-fuchsia-600 font-bold">links</a>
+    </nav>
+  </div>
+  <div class="mx-auto lg:container w-full flex justify-between items-center px-6 mt-6 border-b border-gray-300 pb-6">
+    <div class="flex flex-col gap-8 w-2/3">
+      <h1 class="text-xl font-bold font-sans">graced.is</h1>
+      <p class="text-lg text-balance">This is the personal blog of grace de la Mora.</p>
+      <nav class="hidden md:flex space-x-8 font-sans">
+        <a href="#" class="hover:text-fuchsia-600 font-bold">posts</a>
+        <a href="#" class="hover:text-fuchsia-600 font-bold">categories</a>
+        <a href="#" class="hover:text-fuchsia-600 font-bold">email</a>
+        <a href="#" class="hover:text-fuchsia-600 font-bold">links</a>
+      </nav>
+      <!-- Hamburger for mobile -->
+      <button id="openMenu" class="text-left md:hidden font-sans">
+        &#9776; open menu
+      </button>
+    </div>
+    <img src="../src/assets/IMG_1693.jpeg" class="rounded-full w-28 h-28 object-cover" />
+  </div>
+  <div class="flex flex-col justify-evenly px-6 lg:mx-auto mb-6 border-b border-gray-300 pb-20 flex-grow w-full">
+    <div class="mx-auto w-full md:w-2/3">
+      <h2 class="text-lg my-10 font-sans">post archive</h2>
+      <ul>
+        <li class="px-4 flex gap-8 border-y border-gray-300 hover:bg-fuchsia-50 active:bg-fuchsia-100">
+          <span class="text-gray-600">Oct 17, 2025</span>
+          <span>A new blog post</span>
+        </li>
+        <li class="px-4 flex gap-8 border-b border-gray-300 hover:bg-fuchsia-50 active:bg-fuchsia-100">
+          <span class="text-gray-600">Oct 17, 2025</span>
+          <span>A new blog post</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="px-6 mb-10 lg:w-2/3 mx-auto">
+    <h2 class="text-lg my-4 font-sans">about</h2>
+    <p>I'm a software engineer by profession. I'm also a writer, cooking and
+      baking hobbyist, and artist. I enjoy experimenting with cannabis and cuisine.</p>
+    <p class="text-right"><a href="#" class="italic underline">Read more</a></p>
+  </div>
+  <div
+    class="px-6 pt-6 mb-10 border-t border-gray-300 flex flex-col items-center lg:flex-row lg:justify-between min-w-full">
+    <span>&copy; 2025, grace de la Mora.</span>
+    <span>Theme inspired by <a href="https://wordpress.org/themes/pulitzer/" class="underline">Pulitzer</a>.</span>
+  </div>
+  <script>
+    const mobileMenu = document.getElementById('mobileMenu');
+    const openMenu = document.getElementById('openMenu');
+    const closeMenu = document.getElementById('closeMenu');
+
+    openMenu.addEventListener('click', () => {
+      mobileMenu.classList.remove('pointer-events-none', 'opacity-0', 'translate-y-4');
+      mobileMenu.classList.add('pointer-events-auto', 'opacity-100', 'translate-y-0', 'flex');
+    });
+
+    closeMenu.addEventListener('click', () => {
+      mobileMenu.classList.add('pointer-events-none', 'opacity-0', 'translate-y-4');
+      mobileMenu.classList.remove('pointer-events-auto', 'opacity-100', 'translate-y-0', 'flex');
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,150 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const aboutMe = [
+  {
+    title: "💼 Professional / Tech Life",
+    questions: [
+      {
+        q: "What do you do, and how did you get started in your field?",
+        a: "I'm a software engineer who gets to work on an international web app. I started in elementary school, tinkering with HTML and PHP.",
+      },
+      {
+        q: "What do you enjoy most about being a software engineer?",
+        a: "I get to create and be a visual problem-solver.",
+      },
+      {
+        q: "What technologies or tools are you currently using or learning?",
+        a: "Right now I'm loving working with Next.js, TypeScript, and Tailwind CSS.",
+      },
+      {
+        q: "What projects are you most proud of?",
+        a: "My work! I love what I do and where I get to do it.",
+      },
+      {
+        q: "How would you describe your development style or workflow?",
+        a: "Half vibe-coding, half trying to use my noggin to figure stuff out. Also a lot of googling.",
+      },
+      {
+        q: "What’s one thing you wish more people understood about your work?",
+        a: "Just because I work in tech doesn't mean I know everything about it. I still have a lot to learn, and I love learning.",
+      },
+      {
+        q: "What’s your current focus or goal as a developer?",
+        a: "To be rid of the imposter syndrome!",
+      },
+    ],
+  },
+  {
+    title: "🧠 Personal Philosophy / Mindset",
+    questions: [
+      {
+        q: "What motivates you to keep learning and growing?",
+        a: "You're never too old to learn, and you're never too late to start.",
+      },
+      {
+        q: "How do you approach challenges or burnout?",
+        a: "Unplug. I have a pretty terrible social media habit, so I try to stay off of my phone when I need a break.",
+      },
+      {
+        q: "What’s a quote or mantra you live by?",
+        a: "You live, then you die. Try to make the most of the first half.",
+      },
+      {
+        q: "What’s a mistake that taught you a valuable lesson?",
+        a: "Most people are not your friends.",
+      },
+    ],
+  },
+  {
+    title: "🎨 Hobbies & Interests",
+    questions: [
+      {
+        q: "What do you enjoy doing outside of coding?",
+        a: "Cooking, writing, and attempting to draw, or paint, or anything involving color.",
+      },
+      {
+        q: "How do you spend your weekends or unwind after a long day?",
+        a: "I try to focus on my revolving door of hobbies.",
+      },
+      {
+        q: "What creative hobbies have surprised you the most?",
+        a: "Cooking and baking. I wasn't allowed to cook as a kid so I never thought about how good at it I could be.",
+      },
+      {
+        q: "What's your current obsession or passion project?",
+        a: "1) finishing this blog and 2) starting my cannabis cooking documentation journey.",
+      },
+      {
+        q: "What skill are you trying to learn just for fun?",
+        a: "Letting myself enjoy things without worrying about being good at them.",
+      },
+    ],
+  },
+  {
+    title: "✍️ Blog-Related",
+    questions: [
+      {
+        q: "Why did you start this blog?",
+        a: "I've kept a blog in one form or another since 2004 and I wanted a permanent space to call my online home.",
+      },
+      {
+        q: "What can readers expect from your posts?",
+        a: "Random musings, thoughts, and ideas. I want to write about my life and my hobbies.",
+      },
+      {
+        q: "Who is your blog for, and what do you hope they get out of it?",
+        a: "Everyone! My brain is a cereal bowl of random thoughts and I have too many interests to keep to myself.",
+      },
+      {
+        q: "What topics are you most excited to write about?",
+        a: "Tech and cooking.",
+      },
+    ],
+  },
+  {
+    title: "🌿 Fun & Personality",
+    questions: [
+      {
+        q: "What’s a fun fact most people don’t know about you?",
+        a: "I was born in the Philippines and grew up in the deep south from the age of 5. No accent, though.",
+      },
+      {
+        q: "What’s your comfort food or favorite thing to cook/bake?",
+        a: "Egg drop soup and cake.",
+      },
+      {
+        q: "If you had a free day with no responsibilities, how would you spend it?",
+        a: "Mostly sleep, but also movie marathon.",
+      },
+      {
+        q: "What fictional universe would you live in if you could?",
+        a: "The Picture of Dorian Gray. It's one of my favorite books of all time.",
+      },
+      { q: "Dogs, cats, or something else?", a: "Definitely cats." },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title="About Me"
+  description="Answering a series of questions about myself."
+>
+  <main class="p-6">
+    {
+      aboutMe.map((section) => (
+        <>
+          <h2 class="my-6 text-2xl lowercase">{section.title}</h2>
+          {section.questions.map(({ q, a }) => (
+            <p class="pb-4">
+              <strong>Q: {q}</strong>
+              <br />
+              A: {a}
+            </p>
+          ))}
+        </>
+      ))
+    }
+  </main>
+</BaseLayout>

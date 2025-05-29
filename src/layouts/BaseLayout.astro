@@ -1,12 +1,14 @@
 ---
-import { ViewTransitions } from "astro:transitions";
-import Header from "../components/Header.astro";
+import NavMenu from "../components/NavMenu.astro";
+import ThemeToggle from "../components/ThemeToggle.astro";
 import { cn } from "../lib/utils";
 import "../styles/global.css";
 
 interface Props {
   title: string;
   description: string;
+  category?: string | "Uncategorized";
+  tags?: string[];
   image?: string;
   className?: string;
 }
@@ -66,15 +68,46 @@ const {
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={new URL(image, Astro.url)} />
-
-    <ViewTransitions />
   </head>
   <body
-    class="font-sans text-zinc-900 antialiased transition-colors dark:bg-zinc-900 dark:text-zinc-200"
+    class={cn(
+      "overscroll-none min-h-screen flex flex-col text-gray-800 font-sans",
+      className,
+    )}
   >
-    <div class={cn("max-w-xl mx-auto p-4", className)}>
-      <Header />
-      <slot />
+    <NavMenu />
+
+    <div
+      class="mb-6 flex w-full flex-grow flex-col justify-evenly border-b border-gray-300 px-6 pb-20 lg:mx-auto"
+    >
+      <div class="mx-auto my-10 w-full md:w-2/3">
+        <slot />
+      </div>
+    </div>
+
+    <div class="mx-auto mb-10 px-6 lg:w-2/3">
+      <h2 class="my-4 font-sans text-lg">about</h2>
+      <p>
+        I'm a software engineer by profession. I'm also a writer, cooking and
+        baking hobbyist, and artist. I enjoy experimenting with cannabis and
+        cuisine. I'm a community organizer, early career mentor, and political
+        hobbyist. Owned by three cats.
+      </p>
+      <p class="text-right">
+        <a href="/about" class="italic underline">Read more</a>
+      </p>
+    </div>
+    <div
+      class="mb-10 flex min-w-full flex-col items-center border-t border-gray-300 px-6 pt-6 lg:flex-row lg:justify-between"
+    >
+      <span>&copy; 2025, grace de la Mora.</span>
+      <ThemeToggle />
+      <span
+        >Theme inspired by <a
+          href="https://wordpress.org/themes/pulitzer/"
+          class="underline">Pulitzer</a
+        >.</span
+      >
     </div>
   </body>
 </html>
