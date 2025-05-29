@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
-import Layout from "../../layouts/Layout.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 import { formatDate } from "../../lib/utils";
 
 const collection = await getCollection("posts");
@@ -10,24 +10,29 @@ const posts = collection.sort(
 );
 ---
 
-<Layout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <main>
-    <ul class="flex flex-col gap-1.5">
-      {
-        posts.map((post) => (
-          <li>
-            <a
-              href={`/posts/${post.slug}`}
-              class="group flex justify-between gap-3"
-            >
-              <span class="group-hover:underline">{post.data.title}</span>
-              <span class="text-nowrap text-zinc-500">
-                {formatDate(post.data.date)}
-              </span>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </main>
-</Layout>
+<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+  <h2 class="my-10 font-sans text-2xl">post archive</h2>
+  <ul>
+    {
+      posts.map((post, index) => (
+        <li
+          class={
+            index === 0
+              ? "flex gap-8 border-y border-gray-300 px-4"
+              : "flex gap-8 border-b border-gray-300 px-4"
+          }
+        >
+          <a
+            href={`/posts/${post.slug}`}
+            class="group flex w-full gap-3 hover:bg-fuchsia-50 active:bg-fuchsia-100"
+          >
+            <span class="text-zinc-500 dark:text-zinc-50">
+              {formatDate(post.data.date)}
+            </span>
+            <span class="group-hover:underline">{post.data.title}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

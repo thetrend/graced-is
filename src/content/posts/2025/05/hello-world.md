@@ -1,7 +1,9 @@
 ---
 title: "hello world"
 description: "brain dump"
-date: "May 14 2025"
+date: "2025-05-14"
+category: "Life"
+tags: ["NYC", "weed"]
 ---
 Well, I have been terrible at documenting my life as of late. This is my latest attempt. Hopefully this will be permanent. 🙂 I want this to be a space where I throw all my markdown diaries and tutorials, whether that's code or trying out different recipes for weed brownies. (Relax, it's legal in my state!) I also want to post my own informal reviews of media but we'll see if I ever get around to doing that.
 

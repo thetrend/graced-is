@@ -1,7 +1,9 @@
 ---
 title: "pot brownies"
 description: "recipe time"
-date: "May 14 2025"
+date: "2025-05-14"
+category: "Food"
+tags: ["recipes", "weed"]
 ---
 So I made pot brownies! It was a week and a half ago so they are completely demolished at this point but I wanted to document this for future reference.
 
@@ -16,7 +18,7 @@ The final result:
 
 ![Triple Hazelnut Pot Brownies](/static/2025/05/pot-brownies/brownies.jpeg)
 
-Recipe:
+### Recipe:
 - 5 oz. dark chocolate, coarsely chopped
 - 6 tbs. infused coconut oil
 - 2 large eggs (room temp)
@@ -25,11 +27,12 @@ Recipe:
 - 1/2 c. all-purpose flour
 - 1/2 tsp. salt
 
-Hazelnut spread:
+### Hazelnut spread:
 - 12 oz. hazelnut spread
 - 2 tsp. infused coconut oil
 - 5 oz. dark chocolate, finely chopped
 
+### Instructions:
 1. Preheat oven to 350°. Spray your pan with Pam or butter then flour (or use cocoa powder) to prevent the brownies from sticking.
 2. Double-boil coarsely chopped chocolate and coconut oil until completely melted. Let cool 5 min.
 3. Beat eggs with sugar in large bowl using whisk until pale, thick, and fluffy.
