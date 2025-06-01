@@ -13,15 +13,15 @@ const links = [
 <BaseLayout title="Links" description="A collection of useful links.">
   <main class="p-6">
     <h1 class="my-10 text-2xl lowercase">Links</h1>
-    <ul class="space-y-4">
+    <ul>
       {
         links.map((link, index) => {
           return (
             <li
               class={
                 index === 0
-                  ? "flex gap-8 border-y border-gray-300 px-4"
-                  : "flex gap-8 border-b border-gray-300 px-4"
+                  ? "flex gap-10 border-y border-gray-300 px-4"
+                  : "flex gap-10 border-b border-gray-300 px-4"
               }
             >
               <a

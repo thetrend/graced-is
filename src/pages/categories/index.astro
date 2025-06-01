@@ -31,7 +31,7 @@ const postsByCategory = posts.reduce(
       Object.keys(postsByCategory).length === 0 ? (
         <p>No categories found.</p>
       ) : (
-        <ul class="mx-auto max-w-3xl space-y-12">
+        <ul class="mx-auto">
           {Object.entries(postsByCategory).map(([key, group]) => (
             <li>
               <h2 class="mb-3 text-left text-lg font-semibold">
@@ -42,7 +42,7 @@ const postsByCategory = posts.reduce(
                   {group.name}
                 </a>
               </h2>
-              <ul class="space-y-2">
+              <ul>
                 {group.posts.map((post, index) => {
                   const slugPath = Array.isArray(post.slug)
                     ? post.slug.join("/")
@@ -51,8 +51,8 @@ const postsByCategory = posts.reduce(
                     <li
                       class={
                         index === 0
-                          ? "flex gap-8 border-y border-gray-300 px-4"
-                          : "flex gap-8 border-b border-gray-300 px-4"
+                          ? "flex gap-10 border-y border-gray-300 px-4"
+                          : "flex gap-10 border-b border-gray-300 px-4"
                       }
                     >
                       <a
