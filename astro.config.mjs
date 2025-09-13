@@ -7,11 +7,14 @@ import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import { SITE_URL } from "./src/consts";
 
+import netlify from "@astrojs/netlify";
+
 // https://astro.build/config
 export default defineConfig({
   site: SITE_URL,
   output: "server",
   integrations: [mdx(), sitemap(), tailwind()],
+
   markdown: {
     shikiConfig: {
       themes: {
@@ -20,4 +23,6 @@ export default defineConfig({
       },
     },
   },
+
+  adapter: netlify(),
 });
