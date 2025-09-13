@@ -1,30 +1,30 @@
 ---
+import { Image } from "astro:assets";
 import PROFILE_PHOTO from "../assets/profile.jpeg";
 ---
 
 <div
-  class="mx-auto mt-6 flex w-full items-center justify-between border-b border-gray-300 px-6 pb-6 lg:container"
+  class="mx-auto mt-6 flex w-full items-center justify-between border-b border-gray-300 px-6 pb-6 lg:container dark:border-gray-800"
 >
   <div class="flex w-2/3 flex-col gap-10">
     <h1 class="font-sans text-2xl hover:text-fuchsia-600">
       <a href="/">graced.is</a>
     </h1>
-    <p class="text-balance text-lg">
-      This is the personal blog of grace de la Mora.
-    </p>
+    <p class="text-balance text-lg">✨ Welcome to my personal blog ✨</p>
     <nav class="hidden space-x-8 font-sans md:flex">
-      <a href="/posts" class="font-bold hover:text-fuchsia-600">posts</a>
-      <a href="/categories" class="font-bold hover:text-fuchsia-600"
-        >categories</a
-      >
-      <a href="/contact" class="font-bold hover:text-fuchsia-600">contact</a>
-      <a href="/links" class="font-bold hover:text-fuchsia-600">links</a>
+      <a href="/" class="font-bold">home</a>
+      <a href="/contact" class="font-bold">contact</a>
     </nav>
     <button id="openMenu" class="text-left font-sans md:hidden"
       >&#9776; open menu</button
     >
   </div>
-  <img src={PROFILE_PHOTO.src} class="h-28 w-28 rounded-full object-cover" />
+  <Image
+    priority
+    src={PROFILE_PHOTO}
+    alt="Grace outside in her backyard"
+    class="h-28 w-28 rounded-full object-cover"
+  />
 </div>
 
 <!-- Mobile Menu Overlay -->
@@ -36,11 +36,8 @@ import PROFILE_PHOTO from "../assets/profile.jpeg";
     >&times;</button
   >
   <nav class="mt-20 flex flex-col items-center gap-10 font-sans text-2xl">
-    <a href="/posts" class="font-bold hover:text-fuchsia-600">posts</a>
-    <a href="/categories" class="font-bold hover:text-fuchsia-600">categories</a
-    >
-    <a href="/contact" class="font-bold hover:text-fuchsia-600">contact</a>
-    <a href="/links" class="font-bold hover:text-fuchsia-600">links</a>
+    <a href="/" class="font-bold">home</a>
+    <a href="/contact" class="font-bold">contact</a>
   </nav>
 </div>
 <script>

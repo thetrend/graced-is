@@ -2,7 +2,6 @@
 import { getCollection } from "astro:content";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { formatDate } from "../lib/utils";
 
 const collection = await getCollection("posts");
 const posts = collection.sort(
@@ -11,28 +10,6 @@ const posts = collection.sort(
 ---
 
 <BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
-  <h2 class="my-10 font-sans text-lg">post archive</h2>
-  <ul>
-    {
-      posts.map((post, index) => (
-        <li
-          class={
-            index === 0
-              ? "flex gap-10 border-y border-gray-300 px-4"
-              : "flex gap-10 border-b border-gray-300 px-4"
-          }
-        >
-          <a
-            href={`/posts/${post.slug}`}
-            class="group flex w-full gap-3 hover:bg-fuchsia-50 active:bg-fuchsia-100"
-          >
-            <span class="text-zinc-500 dark:text-zinc-50">
-              {formatDate(post.data.date)}
-            </span>
-            <span class="group-hover:underline">{post.data.title}</span>
-          </a>
-        </li>
-      ))
-    }
-  </ul>
+  <h2 class="my-10 font-sans text-lg">paused:</h2>
+  brb, taking a break.
 </BaseLayout>

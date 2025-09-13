@@ -8,81 +8,34 @@
     src: url("/fonts/geist-variable.woff2") format("woff2");
     font-display: swap;
   }
+
   @font-face {
     font-family: "Geist Mono";
     src: url("/fonts/geist-mono-variable.woff2") format("woff2");
     font-display: swap;
   }
-  html.dark .astro-code,
-  html.dark .astro-code span {
-    color: var(--shiki-dark) !important;
-    background-color: var(--shiki-dark-bg) !important;
-    font-style: var(--shiki-dark-font-style) !important;
-    font-weight: var(--shiki-dark-font-weight) !important;
-    text-decoration: var(--shiki-dark-text-decoration) !important;
-  }
 }
+
 
 @layer components {
   body {
     @apply bg-slate-50 text-black dark:bg-zinc-900 dark:text-zinc-100;
   }
-  article {
-    p {
-      @apply my-4 leading-relaxed;
-    }
-    h1 {
-      @apply my-4 text-xl font-medium font-sans;
-    }
-    h2 {
-      @apply my-4 text-lg font-medium font-sans;
-    }
-    h3,
-    h4,
-    h5,
-    h6 {
-      @apply my-4 font-medium font-sans;
-    }
-    :not(pre) > code {
-      @apply whitespace-nowrap rounded border bg-zinc-200/50 px-1 py-0.5 font-mono text-sm font-medium text-black dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-white;
-    }
-    pre:has(code) {
-      @apply my-4 max-h-[600px] overflow-auto rounded-lg border p-4 font-mono text-sm font-medium bg-zinc-100 dark:bg-zinc-900 dark:border-zinc-700;
-    }
-    img {
-      @apply my-4 rounded-lg border dark:border-zinc-700;
-    }
-    video {
-      @apply my-4 rounded-lg border dark:border-zinc-700;
-    }
-    blockquote {
-      @apply my-4 border-l-2 pl-4 border-zinc-300 dark:border-zinc-700;
-      @apply bg-zinc-100 dark:bg-zinc-800;
-    }
-    a {
-      @apply text-fuchsia-600 hover:underline dark:text-fuchsia-400;
-    }
-    table {
-      @apply my-4 w-full table-auto border-collapse text-sm;
-      th {
-        @apply border-b p-4 text-left font-medium border-zinc-200 dark:border-zinc-700;
-        @apply bg-zinc-100 dark:bg-zinc-900;
-      }
-      td {
-        @apply border-b bg-zinc-50 p-4 border-zinc-200 dark:border-zinc-700 dark:bg-zinc-800;
-      }
-    }
-    ol {
-      @apply my-1 list-inside list-decimal space-y-1 [&_ol]:pl-5 [&_ul]:pl-5;
-    }
-    ul {
-      @apply my-1 list-inside list-disc space-y-1 [&_ol]:pl-5 [&_ul]:pl-5;
-    }
-    kbd {
-      @apply rounded border border-b-2 bg-zinc-100 px-1 py-0.5 font-mono text-xs font-medium text-black dark:border-zinc-700 dark:bg-zinc-800 dark:text-white;
-    }
-    mark {
-      @apply bg-yellow-200 dark:bg-yellow-500/50 dark:text-white;
-    }
+
+  p:not(p:last-child) {
+    @apply mb-6;
+  }
+
+  a {
+    @apply relative text-pink-500 font-semibold font-sans pb-2;
+  }
+
+  a::before {
+    content: '';
+    @apply absolute w-full h-1 border-r-4 bottom-0 left-0 origin-right scale-x-0 transition-transform duration-300 ease-in-out bg-pink-500;
+  }
+
+  a:hover::before {
+    @apply origin-left scale-x-100;
   }
 }

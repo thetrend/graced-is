@@ -4,8 +4,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
 <BaseLayout title="Email" description="This is the email page.">
   <main class="p-6">
-    <h1 class="pb-6 text-2xl">contact me</h1>
-    <div id="formMessage" class="pb-10"></div>
+    <h2 class="pb-6 text-2xl">✉️ email me 📫</h2>
+    <p>Wanna chat? drop me a line and I'll reply as soon as I can.</p>
+    <div id="formMessage"></div>
     <form id="contactForm" class="space-y-4">
       <div>
         <label for="name" class="mb-1 block font-semibold">Name</label>
@@ -34,7 +35,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
         <textarea
           id="message"
           name="message"
-          rows="4"
+          rows="5"
           required
           class="w-full rounded border px-3 py-2"></textarea>
       </div>
