@@ -96,8 +96,13 @@ function ColorRow({ label, color, setColor, updateGradient, saturationRef }) {
       <div className="sliders">
         <div className="input-group">
           <label>HEX</label>
-          <input value={hexInput} onChange={handleHexChange} placeholder="#FFFFFF" />
-          <label>HSB</label>
+          <input
+            value={hexInput}
+            onChange={handleHexChange}
+            inputMode="hexadecimal"
+            autoCapitalize="characters"
+            placeholder="#FFFFFF"
+          />          <label>HSB</label>
           <input value={`${Math.round(color.h)},${Math.round(color.s * 100)},${Math.round(color.b * 100)}`} readOnly />
         </div>
 
