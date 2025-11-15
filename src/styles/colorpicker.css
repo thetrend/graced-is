@@ -84,8 +84,9 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 .gradient-container {
-  width: 600px;
+  padding: 0 20px;
   height: 40px;
+  width: 100%;
   position: relative;
   margin: 20px 0;
   cursor: pointer;
